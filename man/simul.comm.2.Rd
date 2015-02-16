@@ -7,10 +7,11 @@
 \usage{
 simul.comm.2(totS = 300, gr1.length = 5000, gr2.length = 5000,
   niche.type = "random", max.niche.breath = c(gr1.length, gr2.length),
-  seed = NULL, plotting = F)
+  min.niche.breath = c(10, 10), prop.random.species = c(0, 0),
+  seed = NULL, plotting = F, highlight.species = NULL)
 
 sample.comm.2(simul.comm = simul.comm.2(), Np = 300, sample.x1 = NULL,
-  sample.x2 = NULL, no.ind = 100, no.spec = 20, seed = NULL, pa = F,
+  sample.x2 = NULL, no.ind = 100, k = 0.2, seed = NULL, pa = F,
   based.on = "individuals")
 }
 \arguments{
@@ -22,9 +23,13 @@ sample.comm.2(simul.comm = simul.comm.2(), Np = 300, sample.x1 = NULL,
 
 \item{max.niche.breath}{vector of the length = 2, with maximum niche breath along first and second gradient (default = \code{c(gr1.length, gr2.length)})}
 
+\item{min.niche.breath}{vector of the length = 2, with minimum niche breath along the first and second gradient (default = \code{c(10, 10)}). Cannot be more than \code{max.niche.breath}.}
+
 \item{seed}{set random seed for reproducing always the same result}
 
-\item{plotting}{should the species response curves along simulated gradient be drawned?}
+\item{plotting}{should the species response curves along simulated gradient be drawned? Default = \code{FALSE}.}
+
+\item{highlight.species}{vector of species numbers which should be highlighted by color in ploted diagram (if \code{plotting = TRUE}). Default = \code{NULL}, which means that if plot is drawned, two species will be highlighted - the most generalized and the most specialized ones.}
 
 \item{simul.comm}{result of simul.comm.2 function with parameters of individual species response curves}
 
@@ -34,11 +39,33 @@ sample.comm.2(simul.comm = simul.comm.2(), Np = 300, sample.x1 = NULL,
 
 \item{no.ind}{mean number of individuals to be drawn from the species pool (if \code{based.on = 'individuals'})}
 
-\item{no.spec}{number of species to be drawn from species pool (if \code{based.on = 'species'})}
+\item{k}{mean proportion of species from species pool to be drawn into local community (if \code{based.on = 'species'})}
 
 \item{pa}{result table will be generated in presence-absence form (default \code{pa = TRUE})}
 
 \item{based.on}{should the sampling of species from species pool be based on \code{'individuals'} or \code{'species'}? (default = \code{'individuals'})}
+}
+\value{
+The function \code{simul.comm.2} returns \code{list} with 14 items, describing the set of parameters used to simulate community of species response curves:
+\itemize{
+\item \code{totS} Total number of species in simulation.
+\item \code{gr1.length, gr2.length} Length of the first and second gradient, respectively.
+\item \code{niche.type} Shape of species response curves.
+\item \code{Ao1, Ao2} Vector of species amplitudes for the first and second gradient, respectively (heights of species response curves, corresponding to maximum probability of species to be selected to community in species optima).
+\item \code{m1, m2} Vector of species optima along the first and second gradient, respectively.
+\item \code{r1, r2} Vector of generated species ranges along the first and second gradient, respectively (generated niche breaths).
+\item \code{range1, range2} Vector of realised species ranges along the first and second gradient, respectively, considering the truncation of species response curves by gradient margins (these differ from \code{r1} and \code{r2} especially at the gradient margins, where the generated species niche may be wide, but since the margin cuts the species occurrences, realised species niche is narrower.)
+\item \code{a1, a2, g1, g2} Vectors of shape parameters for curves (used in beta function to generate the shape of the species response curve)
+\item \code{A1.all, A2.all} Matrix (dim = gradient length x number of species) with simulated probabilites of individual specie at individual location along the gradient.
+}
+The function \code{sample.comm.2} returns \code{list} of 8 items with parameters of generated community data; the last item contains also all items returned by \code{simul.comm.2} function:
+\itemize{
+\item \code{a.mat} Matrix (sample x species) of species abundances in samples.
+\item \code{p.mat} Matrix (sample x species) of species occurrence probabilities in samples.
+\item \code{sample.x1, sample.x2} Vector with positions of samples along the first and second simulated gradient, respectively (environmental variable).
+\item \code{sample.comm} List of 6 items storing initial settings of arguments in \code{sample.comm.2} (namely arguments \code{Np, based.on, no.ind, k, seed} and \code{pa}).
+\item \code{simul.comm} List of 14 items returned by function \code{simul.comm.2}.
+}
 }
 \description{
 Simulation of ecological data structured by two ecological gradients
