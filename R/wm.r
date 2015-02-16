@@ -29,7 +29,7 @@
 wm <- function (sitspe, speatt)
 {
   sitspe <- as.matrix (sitspe)
-  speatt <- as.matrix (speatt)
+  speatt <- as.data.frame (as.matrix (speatt))
   wm.temp <- apply (speatt, 2, FUN = function (x) vegan::decostand (sitspe[,!is.na (x)], 'total') %*% x[!is.na(x)])
   attr (wm.temp, 'sitspe') <- sitspe
   attr (wm.temp, 'speatt') <- speatt

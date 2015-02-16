@@ -1,7 +1,7 @@
 Package: weimea
 Type: Package
 Title: Weighted mean of species attributes
-Version: 0.23
+Version: 0.24
 Date: 2015-02-16
 Author: David Zeleny
 Maintainer: David Zeleny <zeleny.david@gmail.com>
