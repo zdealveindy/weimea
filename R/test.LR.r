@@ -39,6 +39,7 @@ test.LR <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
   return (res)
 }
 
+#' @export
 test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
 {
   sitspe <- attr (M, 'sitspe')
