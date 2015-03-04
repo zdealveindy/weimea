@@ -5,9 +5,12 @@
 \alias{print.testLR}
 \alias{summary.testLR}
 \alias{test.LR}
+\alias{test.LR.0}
 \title{Test of the link between sample attributes and matrix of species composition (i.e. whether \bold{L} is linked to \bold{R})}
 \usage{
 test.LR(M, env, type = "dbRDA", alpha = 0.001, sqrt = F)
+
+test.LR.0(M, env, type = "dbRDA", alpha = 0.001, sqrt = F)
 
 \method{print}{testLR}(x, digits = 3, ...)
 

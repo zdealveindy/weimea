@@ -38,7 +38,7 @@ test.LR <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
   class (res) <- 'testLR'
   return (res)
 }
-
+#' @rdname test.LR
 #' @export
 test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
 {
