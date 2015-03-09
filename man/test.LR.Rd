@@ -8,9 +8,9 @@
 \alias{test.LR.0}
 \title{Test of the link between sample attributes and matrix of species composition (i.e. whether \bold{L} is linked to \bold{R})}
 \usage{
-test.LR(M, env, type = "dbRDA", alpha = 0.001, sqrt = F)
+test.LR(M, env, type = "cor", alpha = 0.001, sqrt = F, perm = 199)
 
-test.LR.0(M, env, type = "dbRDA", alpha = 0.001, sqrt = F)
+test.LR.0(M, env, type = "dbRDA", alpha = 0.001, sqrt = F, perm = 199)
 
 \method{print}{testLR}(x, digits = 3, ...)
 
@@ -28,6 +28,8 @@ test.LR.0(M, env, type = "dbRDA", alpha = 0.001, sqrt = F)
 \item{alpha}{Target Type I error rate for Monte Carlo permutation tests (influences number of permutations).}
 
 \item{sqrt}{Logical value, default FALSE. Should the distance matrix based on Whittaker's index of association be square-rooted to become Euclidean? See Details.}
+
+\item{perm}{Number of permutations for \code{type = "cor"}. Default = 199.}
 
 \item{x,object}{Object of the class "testLR"}
 
@@ -50,7 +52,8 @@ Variation explained by given environmental variable (R2) can differ between indi
 }
 \examples{
 data (vltava)
-test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, alpha = 0.05)
+test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, type = 'dbRDA', alpha = 0.05)
 test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, type = 'moran')
+test.LR (M = wm (vltava$spe, vltava$ell)[,1:2], vltava$env$pH, type = 'cor')
 }
 

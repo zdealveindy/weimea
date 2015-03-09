@@ -6,6 +6,7 @@
 #' @param type Currently not implemented. In the future, other types of the test (apart to the one based on db-RDA) should be available.
 #' @param alpha Target Type I error rate for Monte Carlo permutation tests (influences number of permutations).
 #' @param sqrt Logical value, default FALSE. Should the distance matrix based on Whittaker's index of association be square-rooted to become Euclidean? See Details.
+#' @param perm Number of permutations for \code{type = "cor"}. Default = 199.
 #' @param x,object Object of the class "testLR"
 #' @param digits Number of digits reported for parameters in summary output.
 #' @param ... Other arguments passed into \code{print}, \code{summary} and \code{coef} functions. Currently not supported.
@@ -22,25 +23,26 @@
 #' @name test.LR
 #' @examples
 #' data (vltava)
-#' test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, alpha = 0.05)
+#' test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, type = 'dbRDA', alpha = 0.05)
 #' test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, type = 'moran')
+#' test.LR (M = wm (vltava$spe, vltava$ell)[,1:2], vltava$env$pH, type = 'cor')
 
 #' @export
-test.LR <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
+test.LR <- function (M, env, type = 'cor', alpha = 0.001, sqrt = F, perm = 199)
 {
   if (!is.wm (M)) stop ("Argument M must be an object of class 'wm'!")
   env <- as.matrix (env)
   if (is.null(colnames (env))) colnames (env) <- 'env'
   res <- list ()
   for (co.M in colnames (M))
-   for (co.env in colnames (env))
-     res [[co.M]][[co.env]] <- test.LR.0 (M = M[,co.M], env = env[,co.env], type = type, alpha = alpha, sqrt = sqrt)
+    for (co.env in colnames (env))
+      res [[co.M]][[co.env]] <- test.LR.0 (M = M[,co.M], env = env[,co.env], type = type, alpha = alpha, sqrt = sqrt, perm = perm)
   class (res) <- 'testLR'
   return (res)
 }
 #' @rdname test.LR
 #' @export
-test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
+test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F, perm = 199)
 {
   sitspe <- attr (M, 'sitspe')
   speatt <- attr (M, 'speatt')
@@ -53,13 +55,25 @@ test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F)
   }
   if (type == 'moran')
   {
-    #residuals <- resid (lm (M ~ as.matrix (env)))
+    residuals <- resid (lm (M ~ as.matrix (env)))
     ia.dist.inv <- as.matrix (1-ia (sitspe.temp))
-    #diag (ia.dist.inv) <- 0
-    moran <- ape::Moran.I (env, weight = ia.dist.inv)
+    diag (ia.dist.inv) <- 0
+    moran <- ape::Moran.I (residuals, weight = ia.dist.inv)
     res <- list (type = 'moran', moran = moran)
   }
-    return (res)
+  if (type == 'cor')
+  {
+    env <- as.matrix (env)
+    Q.art <- wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env))
+    obs.stat <- cor.test (Q.art, env)$statistic
+    exp.stat <- replicate (perm, expr = {
+      env <- sample (env)
+      cor.test (wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env)), env)$statistic
+    })
+    P <- sum (abs (c(obs.stat, exp.stat)) >= abs (obs.stat))/(perm+1)
+    res <- list (type = 'cor', cor = P)
+  }
+  return (res)
 }
 
 #' @rdname test.LR
@@ -70,14 +84,14 @@ print.testLR <- function (x, digits = 3, ...)
   names.speatt <- names (x)
   names.env <- names (x[[1]])
   res <- lapply (x, FUN = function (sp) lapply (sp, FUN = function (en) 
-    {
+  {
+    if (en$type == 'cor') res.temp <- c(NA, format (en$cor, digits = digits), format (symnum.pval (en$cor)))
     if (en$type == 'dbRDA') res.temp <- c(format (vegan::RsquareAdj (en$pcoa)$r.squared, digits = digits), format (en$anova[,'Pr(>F)'][1], digits = digits), symnum.pval (en$anova[,'Pr(>F)'][1]))
     if (en$type == 'moran') res.temp <- c(format (en$moran$observed, digits = digits), format (en$moran$p.value, digits = 3), symnum.pval (en$moran$p.value))
     return (res.temp)
-    }))
+  }))
   
   res.m <- matrix (unlist (res), ncol = 3*length (names.env), nrow = length (names.speatt), dimnames = list (names.speatt, as.vector (rbind (names.env, "P", ""))), byrow = T)
-  cat ('\nTable of variation in species composition, which is used to calculate individual weighted means of species attributes (in rows), explained by explanatory variables (in columns). Explained variation is expressed as R2 (not adjusted).\n\n')
   print.default (res.m, quote = F, right = T)
 }
 
@@ -94,6 +108,7 @@ coef.testLR <- function (object, ...)
   names.env <- names (object[[1]])
   res <- lapply (object, FUN = function (sp) lapply (sp, FUN = function (en) 
   {
+    if (en$type == 'cor') res.temp <- c(NA, en$cor)
     if (en$type == 'dbRDA') res.temp <- c(vegan::RsquareAdj (en$pcoa)$r.squared, en$anova[,'Pr(>F)'][1])
     if (en$type == 'moran') res.temp <- c(en$moran$observed, en$moran$p.value)
     return (res.temp)
