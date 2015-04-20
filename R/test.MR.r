@@ -19,7 +19,7 @@
 #' @examples 
 #' data (vltava)
 #' M <- wm (sitspe = vltava$herbs$spe, speatt = vltava$herbs$traits)
-#' re <- test.MR (M = M, env = vltava$env[,c('pH', 'COVERE32')])
+#' re <- test.MR (M = M, env = vltava$env[,c('pH', 'COVERE32')], parallel = 4)
 #' @details
 #' Currently implemented statistical methods are correlation (\code{'cor'}), linear regression (\code{method = 'lm'}), ANOVA (\code{'aov'}) and Kruskal-Wallis test (\code{'kruskal'}).
 #'
@@ -66,7 +66,7 @@ test.MR <- function (M, env, method = c('cor'), cor.coef = c('pearson'), depende
   {
     vars.names <- expand.grid (env = colnames (env), M = colnames (M))[,2:1]
     vars.order <- expand.grid (env = 1:ncol (env), M = 1:ncol (M))[,2:1]
-    res <- apply (vars.order, 1, FUN = function (var12)
+    FUN <- function (var12)
       {
       obs <- cor.test (M[,var12[[1]]], env[,var12[[2]]], method = cor.coef)
       obs.coef <- obs$estimate
@@ -96,7 +96,16 @@ test.MR <- function (M, env, method = c('cor'), cor.coef = c('pearson'), depende
         P.seq <- max (P.stand.seq, P.modif.seq)
       }
       list (obs.coef = obs.coef, obs.stat = obs.stat, P.param = P.param, P.stand = P.stand, P.modif = P.modif, P.comb = P.comb, P.seq = P.seq)
-    })
+    }
+    if (is.null (parallel)) 
+      res <- apply (vars.order, 1, FUN = FUN) else 
+      {
+        require (parallel)
+        cl <- makeCluster (parallel)
+        clusterExport (cl, varlist = c('M', 'env'), envir = environment ())
+        clusterEvalQ (cl, eval (call ('library', 'weimea')))
+        res <- parApply (cl, vars.order, 1, FUN = FUN)
+      }
   }
 
 names (res) <- apply (vars.names, 1, FUN = function (x) paste (x[1], x[2], sep = ' / '))
@@ -108,7 +117,7 @@ for (i in seq (1, length (res[[1]])))
   repl <- unlist (lapply (res, FUN = function (x) x[[i]]))
   if (!is.null (repl)) res.temp[,i] <- repl  
 }
-result <- list (summary = res.temp, param = list (method = method, cor.coef = cor.coef, dependence = dependence, permutations = permutations, test = test))
+result <- list (summary = as.data.frame (res.temp), param = list (method = method, cor.coef = cor.coef, dependence = dependence, permutations = permutations, test = test))
 class (result) <- 'testMR'
 return (result)
 }

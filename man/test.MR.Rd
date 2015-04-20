@@ -63,7 +63,7 @@ Specific issue related to weighted mean is the case of missing species attribute
 \examples{
 data (vltava)
 M <- wm (sitspe = vltava$herbs$spe, speatt = vltava$herbs$traits)
-re <- test.MR (M = M, env = vltava$env[,c('pH', 'COVERE32')])
+re <- test.MR (M = M, env = vltava$env[,c('pH', 'COVERE32')], parallel = 4)
 }
 \seealso{
 \code{\link{wm}}
