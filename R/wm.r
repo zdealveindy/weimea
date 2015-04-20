@@ -37,6 +37,16 @@ wm <- function (sitspe, speatt)
   wm.temp
 }
 
+#wmC <- function (sitspe, speatt)
+#{
+#  sitspe <- as.matrix (sitspe)
+#  speatt <- as.data.frame (as.matrix (speatt))
+#  wm.temp <- wm_Cpp (speatt, sitspe)
+#  attr (wm.temp, 'sitspe') <- sitspe
+#  attr (wm.temp, 'speatt') <- speatt
+#  attr(wm.temp, 'class') <- c('wm')
+#  wm.temp
+#}
 
 #' @rdname wm
 #' @export

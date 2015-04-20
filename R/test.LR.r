@@ -64,8 +64,8 @@ test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F, perm = 1
   if (type == 'cor')
   {
     env <- as.matrix (env)
-    Q.art <- wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env))
-    obs.stat <- cor.test (Q.art, env)$statistic
+    M.art <- wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env))
+    obs.stat <- cor.test (M.art, env)$statistic
     exp.stat <- replicate (perm, expr = {
       env <- sample (env)
       cor.test (wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env)), env)$statistic
@@ -116,3 +116,4 @@ coef.testLR <- function (object, ...)
   res.m <- matrix (unlist (res), ncol = 2*length (names.env), nrow = length (names.speatt), dimnames = list (names.speatt, as.vector (rbind (names.env, "P values"))), byrow = T)
   return (res.m)
 }
+
