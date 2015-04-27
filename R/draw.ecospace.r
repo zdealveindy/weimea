@@ -8,12 +8,16 @@
 #' @param asp Aspect ratio of the plotted region (see argument \code{asp} in \code{\link{plot.window}}).
 #' @param sample.pch,sample.cex Plotting character and its size for points showing location of samples in ecospace. See \code{pch} and \code{cex} in function \code{\link{points}}.
 #' @param species.pch,species.cex Plotting character and its size for points forming the species response surfase in the ecospace. See \code{pch} and \code{cex} in function \code{\link{points}}.
+#' @param xlab,ylab x- and y-axis labels.
+#' @param box Logical; draw the box around plotting region?
+#' @param axes Logical; draw axes?
+#' @param ... Other arguments passed into the function \code{title}.
 #' @examples
 #' library (weimea)
 #' draw.ecospace (sample.comm.2 (simul.comm.2 (totS = 100)), resolution = 100)
 #' @rdname draw.ecospace
 #' @export
-draw.ecospace <- function (sampled.comm, resolution = 200, colors = NULL, species = NULL, sort = TRUE, asp = 1, sample.pch = 3, sample.cex = .5, species.pch = 16, species.cex = 1)
+draw.ecospace <- function (sampled.comm, resolution = 200, colors = NULL, species = NULL, sort = TRUE, asp = 1, sample.pch = 3, sample.cex = .5, species.pch = 16, species.cex = 1, xlab = 'gradient 1', ylab = 'gradient 2', axes = T, box = T, ...)
 {
   if (is.null (colors)) colors <- RColorBrewer::brewer.pal (12, 'Set3')
   if (is.null (species)) species <- 1:sampled.comm$simul.comm$totS
@@ -21,9 +25,10 @@ draw.ecospace <- function (sampled.comm, resolution = 200, colors = NULL, specie
   #windows ()
   plot.new ()
   plot.window (xlim = c(0, sc$gr1.length), ylim = c(0, sc$gr2.length), asp = asp)
-  axis (1)
-  axis (2)
-  box ()
+  if (axes) axis (1)
+  if (axes) axis (2)
+  if (box) box ()
+  title (xlab = xlab, ylab = ylab, ...)
   gr1gr2 <- expand.grid (gr1 = round (seq (1, sc$gr1.length, length = resolution)), gr2 = round (seq (1, sc$gr2.length, length = resolution)))
   spec.prob <- sapply (1:ncol (sc$A1.all), FUN = function (sp) sc$A1.all[gr1gr2$gr1,sp]*sc$A2.all[gr1gr2$gr2, sp])
   sorted.species <- order (colSums (spec.prob[,species] > 0), decreasing = T)

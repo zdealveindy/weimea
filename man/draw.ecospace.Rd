@@ -6,7 +6,8 @@
 \usage{
 draw.ecospace(sampled.comm, resolution = 200, colors = NULL,
   species = NULL, sort = TRUE, asp = 1, sample.pch = 3,
-  sample.cex = 0.5, species.pch = 16, species.cex = 1)
+  sample.cex = 0.5, species.pch = 16, species.cex = 1,
+  xlab = "gradient 1", ylab = "gradient 2", axes = T, box = T, ...)
 }
 \arguments{
 \item{sampled.comm}{Object with simulated community data created by \code{sample.comm.2} function.}
@@ -24,6 +25,14 @@ draw.ecospace(sampled.comm, resolution = 200, colors = NULL,
 \item{sample.pch,sample.cex}{Plotting character and its size for points showing location of samples in ecospace. See \code{pch} and \code{cex} in function \code{\link{points}}.}
 
 \item{species.pch,species.cex}{Plotting character and its size for points forming the species response surfase in the ecospace. See \code{pch} and \code{cex} in function \code{\link{points}}.}
+
+\item{xlab,ylab}{x- and y-axis labels.}
+
+\item{axes}{Logical; draw axes?}
+
+\item{box}{Logical; draw the box around plotting region?}
+
+\item{...}{Other arguments passed into the function \code{title}.}
 }
 \description{
 Draws ecospace with species response surface for two dimensional simulated data
