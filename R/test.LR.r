@@ -28,35 +28,34 @@
 #' test.LR (M = wm (vltava$spe, vltava$ell)[,1:2], vltava$env$pH, type = 'cor')
 
 #' @export
-test.LR <- function (M, env, type = 'cor', alpha = 0.001, sqrt = F, perm = 199)
+test.LR <- function (M, env, type = "cor", cor.coef = c("pearson", "kendall", "spearman"), exact = FALSE, alpha = 0.001, sqrt = F, perm = 199)
 {
+  cor.coef <- match.arg (cor.coef)
   if (!is.wm (M)) stop ("Argument M must be an object of class 'wm'!")
   env <- as.matrix (env)
   if (is.null(colnames (env))) colnames (env) <- 'env'
   res <- list ()
   for (co.M in colnames (M))
     for (co.env in colnames (env))
-      res [[co.M]][[co.env]] <- test.LR.0 (M = M[,co.M], env = env[,co.env], type = type, alpha = alpha, sqrt = sqrt, perm = perm)
+      res [[co.M]][[co.env]] <- test.LR.0 (M = M[,co.M], env = env[,co.env], type = type, cor.coef = cor.coef, alpha = alpha, sqrt = sqrt, perm = perm)
   class (res) <- 'testLR'
   return (res)
 }
 #' @rdname test.LR
 #' @export
-test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F, perm = 199)
+test.LR.0 <- function (M, env, type = 'cor', cor.coef = c('pearson'), exact = FALSE, alpha = 0.001, sqrt = F, perm = 199)
 {
-  sitspe <- attr (M, 'sitspe')
-  speatt <- attr (M, 'speatt')
-  sitspe.temp <- sitspe[, !is.na (speatt)]
+  sitspe <- attr (M, 'sitspe')[, !is.na (attr (M, 'speatt'))]
   if (type == 'dbRDA')
   {
-    if (sqrt) pcoa.temp <- vegan::capscale (sqrt (ia (sitspe.temp)) ~ env) else pcoa.temp <- vegan::capscale (ia (sitspe.temp) ~ env)
+    if (sqrt) pcoa.temp <- vegan::capscale (sqrt (ia (sitspe)) ~ env) else pcoa.temp <- vegan::capscale (ia (sitspe) ~ env)
     anova.temp <- anova (pcoa.temp, alpha = alpha)
     res <- list (type = 'dbRDA', pcoa = pcoa.temp, anova = anova.temp)
   }
   if (type == 'moran')
   {
     residuals <- resid (lm (M ~ as.matrix (env)))
-    ia.dist.inv <- as.matrix (1-ia (sitspe.temp))
+    ia.dist.inv <- as.matrix (1-ia (sitspe))
     diag (ia.dist.inv) <- 0
     moran <- ape::Moran.I (residuals, weight = ia.dist.inv)
     res <- list (type = 'moran', moran = moran)
@@ -65,13 +64,15 @@ test.LR.0 <- function (M, env, type = 'dbRDA', alpha = 0.001, sqrt = F, perm = 1
   {
     env <- as.matrix (env)
     M.art <- wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env))
-    obs.stat <- cor.test (M.art, env)$statistic
+    cor.res <- cor.test (M.art, env, method = cor.coef)
+    obs.stat <- cor.res$statistic
     exp.stat <- replicate (perm, expr = {
       env <- sample (env)
-      cor.test (wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env)), env)$statistic
+      cor.test (wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env)), env, method = cor.coef)$statistic
     })
-    P <- sum (abs (c(obs.stat, exp.stat)) >= abs (obs.stat))/(perm+1)
-    res <- list (type = 'cor', cor = P)
+    if (cor.coef == 'spearman') P <- sum (abs (c(obs.stat, exp.stat)) <= abs (obs.stat))/(perm+1) else
+      P <- sum (abs (c(obs.stat, exp.stat)) >= abs (obs.stat))/(perm+1)  # Spearman's S is sum of variance, increases with decreasing tightness of the correlation
+    res <- list (type = 'cor', statistic = obs.stat, estimate = cor.res$estimate, cor = P)
   }
   return (res)
 }
@@ -85,8 +86,8 @@ print.testLR <- function (x, digits = 3, ...)
   names.env <- names (x[[1]])
   res <- lapply (x, FUN = function (sp) lapply (sp, FUN = function (en) 
   {
-    if (en$type == 'cor') res.temp <- c(NA, format (en$cor, digits = digits), format (symnum.pval (en$cor)))
-    if (en$type == 'dbRDA') res.temp <- c(format (vegan::RsquareAdj (en$pcoa)$r.squared, digits = digits), format (en$anova[,'Pr(>F)'][1], digits = digits), symnum.pval (en$anova[,'Pr(>F)'][1]))
+    if (en$type == 'cor') res.temp <- c(format (en$estimate, digits = digits), format (en$cor, digits = digits), format (symnum.pval (en$cor)))
+    if (en$type == 'dbRDA') res.temp <- c(format (vegan:::RsquareAdj (en$pcoa)$r.squared, digits = digits), format (en$anova[,'Pr(>F)'][1], digits = digits), symnum.pval (en$anova[,'Pr(>F)'][1]))
     if (en$type == 'moran') res.temp <- c(format (en$moran$observed, digits = digits), format (en$moran$p.value, digits = 3), symnum.pval (en$moran$p.value))
     return (res.temp)
   }))
@@ -108,7 +109,7 @@ coef.testLR <- function (object, ...)
   names.env <- names (object[[1]])
   res <- lapply (object, FUN = function (sp) lapply (sp, FUN = function (en) 
   {
-    if (en$type == 'cor') res.temp <- c(NA, en$cor)
+    if (en$type == 'cor') res.temp <- c(en$estimate, en$cor)
     if (en$type == 'dbRDA') res.temp <- c(vegan::RsquareAdj (en$pcoa)$r.squared, en$anova[,'Pr(>F)'][1])
     if (en$type == 'moran') res.temp <- c(en$moran$observed, en$moran$p.value)
     return (res.temp)
