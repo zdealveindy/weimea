@@ -2,9 +2,10 @@
 % Please edit documentation in R/test.MR.r
 \name{test.MR}
 \alias{test.MR}
+\alias{test.MR_R}
 \title{Testing the relationship between weighted-mean of species attributes with sample attributes}
 \usage{
-test.MR(M, env, method = c("cor"), cor.coef = c("pearson"),
+test.MR_R(M, env, method = c("cor"), cor.coef = c("pearson"),
   dependence = "M ~ env", permutations = 199, test = "combined",
   parallel = NULL, P.testLR = 0.05)
 }
@@ -63,7 +64,7 @@ Specific issue related to weighted mean is the case of missing species attribute
 \examples{
 data (vltava)
 M <- wm (sitspe = vltava$herbs$spe, speatt = vltava$herbs$traits)
-re <- test.MR (M = M, env = vltava$env[,c('pH', 'COVERE32')], parallel = 4)
+re <- test.MR (M = M, env = vltava$env[,c('pH', 'COVERE32')])
 }
 \seealso{
 \code{\link{wm}}

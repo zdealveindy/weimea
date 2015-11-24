@@ -25,8 +25,26 @@
 #' mean.eiv[,1]
 #' mean.eiv[1:10, 2:3]
 #' @author David Zeleny (zeleny.david@@gmail.com)
+#' @useDynLib weimea
+#' @importFrom Rcpp evalCpp
+#' @import RcppArmadillo
 #' @export
 wm <- function (sitspe, speatt)
+{
+  sitspe <- as.matrix (sitspe)
+  speatt <- as.matrix (speatt)
+  if (is.null (colnames (speatt)))  colnames (speatt) <- 'speatt_1'
+  if (any (is.na(colnames(speatt)))) colnames (speatt)[is.na (colnames (speatt))] <- paste ('speatt', seq (1, sum (is.na (colnames (speatt)))), sep = '_')
+  wm.temp <- wm_Cpp2 (sitspe, speatt)
+  colnames (wm.temp) <- colnames (speatt)
+  attr (wm.temp, 'sitspe') <- as.data.frame (sitspe)
+  attr (wm.temp, 'speatt') <- as.data.frame (speatt)
+  attr(wm.temp, 'class') <- c('wm')
+  wm.temp
+}
+
+#' @export
+wmR <- function (sitspe, speatt)
 {
   sitspe <- as.matrix (sitspe)
   speatt <- as.data.frame (as.matrix (speatt))
@@ -37,16 +55,19 @@ wm <- function (sitspe, speatt)
   wm.temp
 }
 
-#wmC <- function (sitspe, speatt)
-#{
-#  sitspe <- as.matrix (sitspe)
-#  speatt <- as.data.frame (as.matrix (speatt))
-#  wm.temp <- wm_Cpp (speatt, sitspe)
-#  attr (wm.temp, 'sitspe') <- sitspe
-#  attr (wm.temp, 'speatt') <- speatt
-#  attr(wm.temp, 'class') <- c('wm')
-#  wm.temp
-#}
+#' @rdname wm
+#' @export
+wmC <- function (sitspe, speatt)
+{
+  sitspe <- as.matrix (sitspe)
+  speatt <- as.matrix (speatt)
+  wm.temp <- wm_Cpp (sitspe, speatt)
+  colnames (wm.temp) <- colnames (speatt)
+  attr (wm.temp, 'sitspe') <- sitspe
+  attr (wm.temp, 'speatt') <- as.data.frame (speatt)
+  attr(wm.temp, 'class') <- c('wm')
+  wm.temp
+}
 
 #' @rdname wm
 #' @export

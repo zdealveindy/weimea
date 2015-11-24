@@ -5,7 +5,7 @@
 #' @name mopet
 #' @param M An object of the class \code{wm} 
 #' @param env Vector or matrix with variables. See details.
-#' @param method Statistical method used to analyse the relationship between M (of class \code{wm} and env), partial match to \code{'lm'}, \code{'aov'}, \code{'cor'}, \code{'kruskal'}, \code{'slope'} and \code{fourthcorner}.
+#' @param method Statistical method used to analyse the relationship between M (of class \code{wm} and env), partial match to \code{'lm'}, \code{'aov'}, \code{'cor'}, \code{'kruskal'}, \code{'slope'} and \code{'fourthcorner'}.
 #' @param cor.coef Correlation coefficient in case of \code{method = 'cor'}. Partial match to 'pearson', 'spearman' and 'kendal'.
 #' @param dependence Should M be dependent variable and env independent (\code{'M ~ env'}), or opposite? Applicable only for \code{method = 'lm'}. Partial match to \code{'M ~ env'} and \code{'env ~ M'}, so to write \code{dep = 'M'} is enough.
 #' @param permutations Number of permutations.

@@ -60,20 +60,21 @@ test.LR.0 <- function (M, env, type = 'cor', cor.coef = c('pearson'), exact = FA
     moran <- ape::Moran.I (residuals, weight = ia.dist.inv)
     res <- list (type = 'moran', moran = moran)
   }
-  if (type == 'cor')
+  if (type == 'corR')
   {
     env <- as.matrix (env)
-    M.art <- wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env))
+    M.art <- wmR (sitspe = sitspe, speatt = wmR (sitspe = t (sitspe), speatt = env))
     cor.res <- cor.test (M.art, env, method = cor.coef)
     obs.stat <- cor.res$statistic
     exp.stat <- replicate (perm, expr = {
       env <- sample (env)
-      cor.test (wm (sitspe = sitspe, speatt = wm (sitspe = t (sitspe), speatt = env)), env, method = cor.coef)$statistic
+      cor.test (wmR (sitspe = sitspe, speatt = wmR (sitspe = t (sitspe), speatt = env)), env, method = cor.coef)$statistic
     })
     if (cor.coef == 'spearman') P <- sum (abs (c(obs.stat, exp.stat)) <= abs (obs.stat))/(perm+1) else
       P <- sum (abs (c(obs.stat, exp.stat)) >= abs (obs.stat))/(perm+1)  # Spearman's S is sum of variance, increases with decreasing tightness of the correlation
     res <- list (type = 'cor', statistic = obs.stat, estimate = cor.res$estimate, cor = P)
   }
+  if (type == 'cor') res <- test_LR_cor (sitspe = as.matrix (attr (M, 'sitspe')), speatt = as.matrix (attr (M, 'speatt')), env = as.matrix (env), cor_coef = cor.coef, perm = perm)
   return (res)
 }
 
