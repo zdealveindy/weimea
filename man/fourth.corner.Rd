@@ -12,6 +12,10 @@ fourth.corner(R, L, Q)
 \item{L}{Matrix of species composition.}
 
 \item{Q}{Matrix of species attributes}
+
+\item{fc.test}{Test to be chosen for fourthcorner analysis.}
+
+\item{perm}{Number of permutations.}
 }
 \description{
 calculates the fourth-corner statistic (according to Legendre et al. 1997, compiled according to Peres-Neto et al. 2012)

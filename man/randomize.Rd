@@ -3,7 +3,7 @@
 \name{randomize}
 \alias{randomize}
 \alias{randomize.wm}
-\title{Weighted mean calculated from randoxized species attributes}
+\title{Weighted mean calculated from randomized species attributes}
 \usage{
 randomize(x, ...)
 

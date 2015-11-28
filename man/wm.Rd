@@ -7,12 +7,9 @@
 \alias{print.wm}
 \alias{summary.wm}
 \alias{wm}
-\alias{wmC}
 \title{Weighted mean of species attributes}
 \usage{
 wm(sitspe, speatt)
-
-wmC(sitspe, speatt)
 
 is.wm(object)
 

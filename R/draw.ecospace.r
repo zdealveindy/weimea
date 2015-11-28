@@ -13,7 +13,6 @@
 #' @param axes Logical; draw axes?
 #' @param ... Other arguments passed into the function \code{title}.
 #' @examples
-#' library (weimea)
 #' draw.ecospace (sample.comm.2 (simul.comm.2 (totS = 100)), resolution = 100)
 #' @rdname draw.ecospace
 #' @export

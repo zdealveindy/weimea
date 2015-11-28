@@ -2,6 +2,8 @@
 #' @param R Matrix of sample attributes.
 #' @param L Matrix of species composition.
 #' @param Q Matrix of species attributes
+#' @param fc.test Test to be chosen for fourthcorner analysis.
+#' @param perm Number of permutations.
 fourth.corner <- function (R, L, Q)
 {
   R <- as.matrix (R)
@@ -58,3 +60,47 @@ print.fc <- function (x, ...) print.default (as.matrix (unclass (x)))
 
 #' @export
 summary.fc <- function (object, ...) print (object)
+
+#' @export
+fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm)
+{
+  R <- as.data.frame (env)
+  L <- as.data.frame (sitspe)
+  Q <- as.data.frame (speatt)
+  
+  missing.Q <- ifelse (any (is.na (Q)), TRUE, FALSE)
+  missing.R <- ifelse (any (is.na (R)), TRUE, FALSE)
+  
+  if (!missing.Q & !missing.R) r.h <- fourth.corner.ade0 (R = R, L = L, Q = Q, fc.test = fc.test, perm = perm)
+  if (missing.Q & !missing.R){
+    r.h <- sapply (names (Q), FUN = function (q) {L1 <- L[,!is.na (Q[,q]), drop = FALSE]; Q1 <- Q[!is.na (Q[,q]), q, drop = FALSE]; fourth.corner.ade0 (R = R, L = L1, Q = Q1, fc.test = fc.test, perm = perm)}, simplify = FALSE)
+    r.h <- do.call (rbind.data.frame, r.h)
+    rownames (r.h) <- r.h$names
+    r.h <- r.h[,-1]
+  }
+  
+  if (!missing.Q & missing.R){
+    r.h <- sapply (names (R), FUN = function (r) {L1 <- L[!is.na (R[,r]),, drop = FALSE]; R1 <- R[!is.na (R[,r]), r, drop = FALSE]; fourth.corner.ade0 (R = R1, L = L1, Q = Q, fc.test = fc.test, perm = perm)}, simplify = FALSE)
+    r.h <- do.call (rbind.data.frame, r.h)
+    rownames (r.h) <- r.h$names
+    r.h <- r.h[,-1]
+  }
+  
+  if (missing.Q & missing.R){
+    r.h <- sapply (names (Q), FUN = function (q) sapply (names (R), FUN = function (r) {L1 <- L[!is.na (R[,r]), !is.na (Q[,q])]; Q1 <- Q[!is.na (Q[,q]), q, drop = FALSE]; R1 <- R[!is.na (R[,r]), r, drop = FALSE]; fourth.corner.ade0 (R = R1, L = L1, Q = Q1, fc.test = fc.test, perm = perm)}, simplify = FALSE), simplify = FALSE)
+    r.h <- do.call (rbind.data.frame, lapply (r.h, FUN = function (y) do.call (rbind.data.frame, y)))
+    rownames (r.h) <- r.h$names
+    r.h <- r.h[,-1]
+  }
+  return (r.h)
+}
+
+
+#' @export
+fourth.corner.ade0 <- function (R, L, Q, fc.test, perm)
+{
+  temp <- ade4::fourthcorner (tabR = R, tabL = L, tabQ = Q, modeltype = fc.test, nrepet = perm)
+  temp <- do.call (cbind.data.frame, temp$tabD[c('names', 'obs', 'pvalue')])
+  names (temp) <-  c('names', 'fourthcorner', 'P.value')
+  return (temp)
+}

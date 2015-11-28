@@ -1,4 +1,4 @@
-#' Weighted mean calculated from randoxized species attributes
+#' Weighted mean calculated from randomized species attributes
 #' 
 #' Function applied on the object of class \code{wm}, which returns values of weighted mean calculated from randomized species attributes.
 #' @param x object of the class \code{wm}

@@ -30,7 +30,7 @@
 #' \item COVERE32	estimated cover of tree and shrub layer [\%] (merged tree and shrub estimations, using formula p.tree + p.shrub - p.tree*p.shrub
 #' }
 #' @usage data (vltava)
-#'  @format
+#' @format
 #'  \code{vltava} is a structured list with these items:
 #'  \itemize{
 #'  \item \code{spe} Compositional matrix of all species (sample x species, percentage cover scale)
@@ -51,7 +51,7 @@
 #'    \item \code{spnames} Data frame with two columns: \code{Full.species.name} - original species names, and \code{Layer} - vegetation layer, in which the species occur (3 - tree layer, 2 - shrub layer, 1 - herb layer, J - juveniles of woody species)
 #'    }
 #'  }
- 
+
 #' 
 #' @name vltava
 #' @docType data

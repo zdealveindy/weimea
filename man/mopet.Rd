@@ -19,7 +19,7 @@ mopet(M, env, method = c("lm"), cor.coef = c("pearson"),
 
 \item{env}{Vector or matrix with variables. See details.}
 
-\item{method}{Statistical method used to analyse the relationship between M (of class \code{wm} and env), partial match to \code{'lm'}, \code{'aov'}, \code{'cor'}, \code{'kruskal'}, \code{'slope'} and \code{fourthcorner}.}
+\item{method}{Statistical method used to analyse the relationship between M (of class \code{wm} and env), partial match to \code{'lm'}, \code{'aov'}, \code{'cor'}, \code{'kruskal'}, \code{'slope'} and \code{'fourthcorner'}.}
 
 \item{cor.coef}{Correlation coefficient in case of \code{method = 'cor'}. Partial match to 'pearson', 'spearman' and 'kendal'.}
 

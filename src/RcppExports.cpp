@@ -6,84 +6,26 @@
 
 using namespace Rcpp;
 
-// submat_rcpp
-NumericMatrix submat_rcpp(NumericMatrix X, LogicalVector condition);
-RcppExport SEXP weimea_submat_rcpp(SEXP XSEXP, SEXP conditionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type condition(conditionSEXP);
-    __result = Rcpp::wrap(submat_rcpp(X, condition));
-    return __result;
-END_RCPP
-}
-// subvec_rcpp
-NumericVector subvec_rcpp(NumericVector x, LogicalVector condition);
-RcppExport SEXP weimea_subvec_rcpp(SEXP xSEXP, SEXP conditionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type condition(conditionSEXP);
-    __result = Rcpp::wrap(subvec_rcpp(x, condition));
-    return __result;
-END_RCPP
-}
-// rowsum_rcpp
-NumericVector rowsum_rcpp(NumericMatrix X);
-RcppExport SEXP weimea_rowsum_rcpp(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    __result = Rcpp::wrap(rowsum_rcpp(X));
-    return __result;
-END_RCPP
-}
-// stand_tot_rcpp
-NumericMatrix stand_tot_rcpp(NumericMatrix sitspe);
-RcppExport SEXP weimea_stand_tot_rcpp(SEXP sitspeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericMatrix >::type sitspe(sitspeSEXP);
-    __result = Rcpp::wrap(stand_tot_rcpp(sitspe));
-    return __result;
-END_RCPP
-}
-// wm_Cpp
-NumericMatrix wm_Cpp(NumericMatrix sitspe, NumericMatrix speatt);
-RcppExport SEXP weimea_wm_Cpp(SEXP sitspeSEXP, SEXP speattSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericMatrix >::type sitspe(sitspeSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type speatt(speattSEXP);
-    __result = Rcpp::wrap(wm_Cpp(sitspe, speatt));
-    return __result;
-END_RCPP
-}
-// stand_tot_arma
-arma::mat stand_tot_arma(arma::mat& sitspe);
-RcppExport SEXP weimea_stand_tot_arma(SEXP sitspeSEXP) {
+// stand_tot
+arma::mat stand_tot(arma::mat& sitspe);
+RcppExport SEXP weimea_stand_tot(SEXP sitspeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< arma::mat& >::type sitspe(sitspeSEXP);
-    __result = Rcpp::wrap(stand_tot_arma(sitspe));
+    __result = Rcpp::wrap(stand_tot(sitspe));
     return __result;
 END_RCPP
 }
-// wm_Cpp2
-arma::mat wm_Cpp2(arma::mat sitspe, arma::mat speatt);
-RcppExport SEXP weimea_wm_Cpp2(SEXP sitspeSEXP, SEXP speattSEXP) {
+// wm_rcpp
+arma::mat wm_rcpp(arma::mat sitspe, arma::mat speatt);
+RcppExport SEXP weimea_wm_rcpp(SEXP sitspeSEXP, SEXP speattSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< arma::mat >::type sitspe(sitspeSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type speatt(speattSEXP);
-    __result = Rcpp::wrap(wm_Cpp2(sitspe, speatt));
+    __result = Rcpp::wrap(wm_rcpp(sitspe, speatt));
     return __result;
 END_RCPP
 }
@@ -126,8 +68,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // test_MR_cor
-List test_MR_cor(arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, CharacterVector cor_coef, double perm, double P_testLR, double testLR_perm);
-RcppExport SEXP weimea_test_MR_cor(SEXP sitspeSEXP, SEXP speattSEXP, SEXP envSEXP, SEXP testSEXP, SEXP cor_coefSEXP, SEXP permSEXP, SEXP P_testLRSEXP, SEXP testLR_permSEXP) {
+List test_MR_cor(arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, CharacterVector cor_coef, double perm, double testLR_P, double testLR_perm);
+RcppExport SEXP weimea_test_MR_cor(SEXP sitspeSEXP, SEXP speattSEXP, SEXP envSEXP, SEXP testSEXP, SEXP cor_coefSEXP, SEXP permSEXP, SEXP testLR_PSEXP, SEXP testLR_permSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -137,9 +79,65 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< CharacterVector >::type test(testSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type cor_coef(cor_coefSEXP);
     Rcpp::traits::input_parameter< double >::type perm(permSEXP);
-    Rcpp::traits::input_parameter< double >::type P_testLR(P_testLRSEXP);
+    Rcpp::traits::input_parameter< double >::type testLR_P(testLR_PSEXP);
     Rcpp::traits::input_parameter< double >::type testLR_perm(testLR_permSEXP);
-    __result = Rcpp::wrap(test_MR_cor(sitspe, speatt, env, test, cor_coef, perm, P_testLR, testLR_perm));
+    __result = Rcpp::wrap(test_MR_cor(sitspe, speatt, env, test, cor_coef, perm, testLR_P, testLR_perm));
+    return __result;
+END_RCPP
+}
+// fastLm_wm
+List fastLm_wm(const arma::mat& X, const arma::colvec& y, bool intercept_included);
+RcppExport SEXP weimea_fastLm_wm(SEXP XSEXP, SEXP ySEXP, SEXP intercept_includedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< bool >::type intercept_included(intercept_includedSEXP);
+    __result = Rcpp::wrap(fastLm_wm(X, y, intercept_included));
+    return __result;
+END_RCPP
+}
+// test_LR_lm
+List test_LR_lm(arma::mat sitspe, arma::mat speatt, arma::mat env, double perm);
+RcppExport SEXP weimea_test_LR_lm(SEXP sitspeSEXP, SEXP speattSEXP, SEXP envSEXP, SEXP permSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type sitspe(sitspeSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type speatt(speattSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type env(envSEXP);
+    Rcpp::traits::input_parameter< double >::type perm(permSEXP);
+    __result = Rcpp::wrap(test_LR_lm(sitspe, speatt, env, perm));
+    return __result;
+END_RCPP
+}
+// keep_rows
+arma::uvec keep_rows(arma::mat X);
+RcppExport SEXP weimea_keep_rows(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    __result = Rcpp::wrap(keep_rows(X));
+    return __result;
+END_RCPP
+}
+// test_MR_lm
+List test_MR_lm(arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, const char* dependence, double perm, double testLR_P, double testLR_perm);
+RcppExport SEXP weimea_test_MR_lm(SEXP sitspeSEXP, SEXP speattSEXP, SEXP envSEXP, SEXP testSEXP, SEXP dependenceSEXP, SEXP permSEXP, SEXP testLR_PSEXP, SEXP testLR_permSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type sitspe(sitspeSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type speatt(speattSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type env(envSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type test(testSEXP);
+    Rcpp::traits::input_parameter< const char* >::type dependence(dependenceSEXP);
+    Rcpp::traits::input_parameter< double >::type perm(permSEXP);
+    Rcpp::traits::input_parameter< double >::type testLR_P(testLR_PSEXP);
+    Rcpp::traits::input_parameter< double >::type testLR_perm(testLR_permSEXP);
+    __result = Rcpp::wrap(test_MR_lm(sitspe, speatt, env, test, dependence, perm, testLR_P, testLR_perm));
     return __result;
 END_RCPP
 }

@@ -33,9 +33,9 @@ wm <- function (sitspe, speatt)
 {
   sitspe <- as.matrix (sitspe)
   speatt <- as.matrix (speatt)
-  if (is.null (colnames (speatt)))  colnames (speatt) <- 'speatt_1'
+  if (is.null (colnames (speatt)))  colnames (speatt) <- paste ('speatt', 1:ncol (speatt), sep = '_')
   if (any (is.na(colnames(speatt)))) colnames (speatt)[is.na (colnames (speatt))] <- paste ('speatt', seq (1, sum (is.na (colnames (speatt)))), sep = '_')
-  wm.temp <- wm_Cpp2 (sitspe, speatt)
+  wm.temp <- wm_rcpp (sitspe, speatt)   # Rcpp version of wm function
   colnames (wm.temp) <- colnames (speatt)
   attr (wm.temp, 'sitspe') <- as.data.frame (sitspe)
   attr (wm.temp, 'speatt') <- as.data.frame (speatt)
@@ -51,20 +51,6 @@ wmR <- function (sitspe, speatt)
   wm.temp <- apply (speatt, 2, FUN = function (x) vegan::decostand (sitspe[,!is.na (x)], 'total') %*% x[!is.na(x)])
   attr (wm.temp, 'sitspe') <- sitspe
   attr (wm.temp, 'speatt') <- speatt
-  attr(wm.temp, 'class') <- c('wm')
-  wm.temp
-}
-
-#' @rdname wm
-#' @export
-wmC <- function (sitspe, speatt)
-{
-  sitspe <- as.matrix (sitspe)
-  speatt <- as.matrix (speatt)
-  wm.temp <- wm_Cpp (sitspe, speatt)
-  colnames (wm.temp) <- colnames (speatt)
-  attr (wm.temp, 'sitspe') <- sitspe
-  attr (wm.temp, 'speatt') <- as.data.frame (speatt)
   attr(wm.temp, 'class') <- c('wm')
   wm.temp
 }
@@ -137,4 +123,3 @@ print.wm <- function (x, ...)
   class (x) <- 'matrix'
   print (as.matrix (x))
 }
-

@@ -9,7 +9,7 @@
 \title{Test of the link between sample attributes and matrix of species composition (i.e. whether \bold{L} is linked to \bold{R})}
 \usage{
 test.LR(M, env, type = "cor", cor.coef = c("pearson", "kendall",
-  "spearman"), exact = FALSE, alpha = 0.001, sqrt = F, perm = 199)
+  "spearman"), exact = FALSE, alpha = 0.001, sqrt = F, perm = 499)
 
 test.LR.0(M, env, type = "cor", cor.coef = c("pearson"), exact = FALSE,
   alpha = 0.001, sqrt = F, perm = 199)
@@ -26,6 +26,10 @@ test.LR.0(M, env, type = "cor", cor.coef = c("pearson"), exact = FALSE,
 \item{env}{Matrix with environmental variables.}
 
 \item{type}{Currently not implemented. In the future, other types of the test (apart to the one based on db-RDA) should be available.}
+
+\item{cor.coef}{If \code{type = "cor"}: which correlation coefficient should be used? Partial match to \code{c("pearson", "spearman", "kendal")}.}
+
+\item{exact}{If \code{type = "cor"} and \code{cor.coef = "spearman"} or \code{cor.coef = 'kendal'} - a logical indicating whether and exact p-value should be computed.}
 
 \item{alpha}{Target Type I error rate for Monte Carlo permutation tests (influences number of permutations).}
 
@@ -54,8 +58,6 @@ Variation explained by given environmental variable (R2) can differ between indi
 }
 \examples{
 data (vltava)
-test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, type = 'dbRDA', alpha = 0.05)
-test.LR (M = wm (vltava$spe, vltava$ell), vltava$env, type = 'moran')
-test.LR (M = wm (vltava$spe, vltava$ell)[,1:2], vltava$env$pH, type = 'cor')
+test.LR (M = wm (vltava$spe, vltava$ell), vltava$env[,'pH', drop = FALSE], type = 'cor')
 }
 
