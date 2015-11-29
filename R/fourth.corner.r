@@ -1,9 +1,11 @@
 #' calculates the fourth-corner statistic (according to Legendre et al. 1997, compiled according to Peres-Neto et al. 2012)
-#' @param R Matrix of sample attributes.
-#' @param L Matrix of species composition.
-#' @param Q Matrix of species attributes
+#' @param R,env Matrix of sample attributes.
+#' @param L,sitspe Matrix of species composition.
+#' @param Q,speatt Matrix of species attributes
 #' @param fc.test Test to be chosen for fourthcorner analysis.
 #' @param perm Number of permutations.
+#' @param x,object Object of 'wm' class.
+#' @param ... Other arguments passing into \code{print} or \code{summary} functions (not implemented yet).
 fourth.corner <- function (R, L, Q)
 {
   R <- as.matrix (R)
@@ -56,12 +58,16 @@ fourth.corner.0 <- function (R, L, Q)  # this can be used only in case of no mis
 }
 
 #' @export
+#' @rdname fourth.corner
 print.fc <- function (x, ...) print.default (as.matrix (unclass (x)))
 
 #' @export
+#' @rdname fourth.corner
 summary.fc <- function (object, ...) print (object)
 
+
 #' @export
+#' @rdname fourth.corner
 fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm)
 {
   R <- as.data.frame (env)
@@ -96,7 +102,6 @@ fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm)
 }
 
 
-#' @export
 fourth.corner.ade0 <- function (R, L, Q, fc.test, perm)
 {
   temp <- ade4::fourthcorner (tabR = R, tabL = L, tabQ = Q, modeltype = fc.test, nrepet = perm)

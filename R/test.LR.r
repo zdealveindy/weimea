@@ -11,7 +11,7 @@
 #' @param perm Number of permutations for \code{type = "cor"}. Default = 199.
 #' @param x,object Object of the class "testLR"
 #' @param digits Number of digits reported for parameters in summary output.
-#' @param ... Other arguments passed into \code{print}, \code{summary} and \code{coef} functions. Currently not supported.
+#' @param ... Other arguments passed into \code{print}, \code{summary} or \code{coef} functions (not implemented yet).
 #' 
 #' @details
 #' In case of dbRDA, the matrix of intersample distances is calculated using Whittaker's index of association (\code{\link{ia}}) and significance of the variation explained by sample attributes (R2) is tested by Monte Carlo permutation test. In case of Moran's I, the test is examining wheather the sample attributes variable is compositionally autocorrelated, i.e. whether the Moran's I calculated on this variable using as weighted inverted dissimilarities between sample's species composition is significant.

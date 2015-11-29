@@ -41,7 +41,7 @@ test.LR.0(M, env, type = "cor", cor.coef = c("pearson"), exact = FALSE,
 
 \item{digits}{Number of digits reported for parameters in summary output.}
 
-\item{...}{Other arguments passed into \code{print}, \code{summary} and \code{coef} functions. Currently not supported.}
+\item{...}{Other arguments passed into \code{print}, \code{summary} or \code{coef} functions (not implemented yet).}
 }
 \value{
 Object of the class "testLR", list of lists, each node containing two parts: results of dbRDA analysis (calculated by \code{\link{capscale}} function from \code{vegan}) and results of Monte Carlo permutation test (calculated by \code{\link{anova.cca}} function, also from \code{vegan}).

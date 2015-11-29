@@ -43,6 +43,7 @@ wm <- function (sitspe, speatt)
   wm.temp
 }
 
+#' @rdname wm
 #' @export
 wmR <- function (sitspe, speatt)
 {

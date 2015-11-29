@@ -1,7 +1,7 @@
 Package: weimea
 Type: Package
 Title: Weighted mean analysis
-Version: 0.44
+Version: 0.46
 Date: 2015-11-29
 Author: David Zeleny
 Maintainer: David Zeleny <zeleny.david@gmail.com>
@@ -14,6 +14,7 @@ LazyData: TRUE
 LinkingTo: Rcpp, RcppArmadillo
 Imports:
     vegan,
+    ade4,
     ape,
     parallel,
     RColorBrewer,
@@ -22,3 +23,4 @@ Depends:
     RcppArmadillo
 License: GPL-2
 RoxygenNote: 5.0.1
+SystemRequirements: GNU make

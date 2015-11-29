@@ -2,16 +2,29 @@
 % Please edit documentation in R/fourth.corner.r
 \name{fourth.corner}
 \alias{fourth.corner}
+\alias{fourth.corner.ade}
+\alias{print.fc}
+\alias{summary.fc}
 \title{calculates the fourth-corner statistic (according to Legendre et al. 1997, compiled according to Peres-Neto et al. 2012)}
 \usage{
 fourth.corner(R, L, Q)
+
+\method{print}{fc}(x, ...)
+
+\method{summary}{fc}(object, ...)
+
+fourth.corner.ade(sitspe, speatt, env, fc.test, perm)
 }
 \arguments{
-\item{R}{Matrix of sample attributes.}
+\item{R,env}{Matrix of sample attributes.}
 
-\item{L}{Matrix of species composition.}
+\item{L,sitspe}{Matrix of species composition.}
 
-\item{Q}{Matrix of species attributes}
+\item{Q,speatt}{Matrix of species attributes}
+
+\item{x,object}{Object of 'wm' class.}
+
+\item{...}{Other arguments passing into \code{print} or \code{summary} functions (not implemented yet).}
 
 \item{fc.test}{Test to be chosen for fourthcorner analysis.}
 

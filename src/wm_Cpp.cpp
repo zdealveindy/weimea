@@ -81,7 +81,7 @@ using namespace arma;
 // }
 
 //[[Rcpp::export()]]
-arma::mat stand_tot (arma::mat& sitspe) {
+arma::mat stand_tot (arma::mat sitspe) {
   for (int i = 0; i < sitspe.n_rows; i++){
     sitspe.row(i) /= sum (sitspe.row (i));
   }

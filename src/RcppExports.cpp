@@ -7,12 +7,12 @@
 using namespace Rcpp;
 
 // stand_tot
-arma::mat stand_tot(arma::mat& sitspe);
+arma::mat stand_tot(arma::mat sitspe);
 RcppExport SEXP weimea_stand_tot(SEXP sitspeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat& >::type sitspe(sitspeSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type sitspe(sitspeSEXP);
     __result = Rcpp::wrap(stand_tot(sitspe));
     return __result;
 END_RCPP
