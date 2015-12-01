@@ -5,6 +5,81 @@
 using namespace Rcpp;
 using namespace arma;
 
+
+
+// // [[Rcpp::export()]]
+// NumericMatrix submat_rcpp(NumericMatrix X, LogicalVector condition) {
+//   int n=X.nrow(), k=X.ncol();
+//   NumericMatrix out(n,sum (condition));
+//   for (int i = 0, j = 0; i < k; i++) {
+//     if(condition[i]) {
+//       out(_,j) = X(_,i);
+//       j = j+1;
+//     }
+//   }
+//   return(out);
+// }
+
+// //[[Rcpp::export()]]
+// NumericVector subvec_rcpp (NumericVector x, LogicalVector condition) {
+//   int n = x.size ();
+//   NumericVector out (sum (condition));
+//   for (int i = 0, j = 0; i < n; i++) {
+//     if (condition [i]) {
+//       out(j) = x (i);
+//       j = j+1;
+//     }
+//   }
+//   return (out);
+// }
+
+
+// //[[Rcpp::export()]]
+// NumericVector rowsum_rcpp (NumericMatrix X) {
+//   NumericVector rowsum (X.nrow ());
+//   for (int i = 0; i < X.nrow (); i++){
+//     double total = 0;
+//     for (int j = 0; j < X.ncol (); j++){
+//       total += X (i,j);
+//     }
+//     rowsum[i] = total;
+//   }
+//   return (rowsum);
+// }
+
+// // [[Rcpp::export()]]
+// NumericMatrix stand_tot_rcpp (NumericMatrix sitspe) {
+//   
+//   int sitspe_nrow = sitspe.nrow (), sitspe_ncol = sitspe.ncol ();
+//   
+//   NumericVector rowsum_sitspe = rowsum_rcpp (sitspe);
+//   for (int i = 0; i < sitspe_nrow; i++){
+//     for (int j = 0; j < sitspe_ncol; j++){
+//       sitspe(i,j) = sitspe(i,j)/rowsum_sitspe[i];
+//     }
+//   }
+//   return (sitspe);
+// }
+
+// //[[Rcpp::export()]]
+// NumericMatrix wm_Cpp (NumericMatrix sitspe, NumericMatrix speatt) {
+//   int sitspe_nrow = sitspe.nrow (), speatt_ncol = speatt.ncol ();
+//   
+//   NumericMatrix out (sitspe_nrow, speatt_ncol);
+//   for (int sa = 0; sa < speatt_ncol; sa++) {
+//     NumericMatrix sitspe_temp = stand_tot_rcpp (submat_rcpp (sitspe, !is_na (speatt(_, sa))));
+//     NumericVector speatt_temp = subvec_rcpp (speatt (_, sa), !is_na (speatt (_, sa)));
+//     NumericMatrix sitspe_speatt (sitspe.nrow (), sitspe.ncol ());
+//     for (int ro = 0; ro < sitspe_temp.nrow (); ro++){
+//       for (int co = 0; co < sitspe_temp.ncol (); co++) {
+//         sitspe_speatt (ro, co) = sitspe_temp (ro,co)*speatt_temp (co);
+//       }
+//     }
+//     out (_, sa) = rowsum_rcpp (sitspe_speatt);
+//   }
+//   return (out);
+// }
+
 //[[Rcpp::export()]]
 arma::mat stand_tot (arma::mat sitspe) {
   for (int i = 0; i < sitspe.n_rows; i++){
@@ -54,7 +129,7 @@ List test_LR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
   }
   r_exp (perm) = r_obs; //observed values is put on the last place of the vector
   t_exp (perm) = t_obs; //observed values is put on the last place of the vector
-  double P = (sum (abs (t_exp) >= abs (t_obs))/2)/(perm+1);
+  double P = sum (abs (t_exp) >= abs (t_obs))/(perm+1);
   return List::create (
       _["type"] = "cor",
       _["no.samples"] = sitspe.n_rows,
@@ -105,7 +180,7 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
     }
     r_exp_sta (perm) = r_obs; //observed values is put on the last place of the vector
     t_exp_sta (perm) = t_obs; //observed values is put on the last place of the vector
-    P_sta = (sum (abs (t_exp_sta) >= abs (t_obs))/2)/(perm+1);
+    P_sta = sum (abs (t_exp_sta) >= abs (t_obs))/(perm+1);
   };
   
   if (is_in (CharacterVector::create ("modified", "twostep"), test)){
@@ -118,7 +193,7 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
     }
     r_exp_mod (perm) = r_obs; //observed values is put on the last place of the vector
     t_exp_mod (perm) = t_obs; //observed values is put on the last place of the vector
-    P_mod = (sum (abs (t_exp_mod) >= abs (t_obs))/2)/(perm+1);
+    P_mod = sum (abs (t_exp_mod) >= abs (t_obs))/(perm+1);
   };
 
   if (is_in ("twostep", test)){
@@ -135,7 +210,7 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
     }
     r_exp_LR (perm) = r_obs_LR; //observed values is put on the last place of the vector
     t_exp_LR (perm) = t_obs_LR; //observed values is put on the last place of the vector
-    P_LR = (sum (abs (t_exp_LR) >= abs (t_obs_LR))/2)/(perm+1);
+    P_LR = sum (abs (t_exp_LR) >= abs (t_obs_LR))/(perm+1);
     if (P_LR <= testLR_P) {P_two = P_mod;} else {P_two = P_sta;};
   };
   
@@ -171,8 +246,10 @@ List fastLm_wm (const arma::mat& X, const arma::colvec& y, bool intercept_includ
 //   
 //   arma::colvec std_err = arma::sqrt(s2 * arma::diagvec(arma::pinv(arma::trans(X)*X)));  
   return List::create(_["coefficients"] = coef,
+  // not needed       _["stderr"]       = std_err,
                       _["df.residual"]  = rdf,
                       _["df.model"] = mdf,
+  // not needed       _["residuals"] = res,
                       _["F.value"] = F,
                       _["R.squared"] = rsq
                       );

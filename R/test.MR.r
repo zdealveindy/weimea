@@ -63,7 +63,7 @@ test.MR <- function (M, env, method = c('cor'), cor.coef = c('pearson'), depende
   if (is.null (testLR.perm)) testLR.perm <- perm
   if (!is.wm (M) & ("modified" %in% test || "twostep" %in% test || "sequential" %in% test || "all" %in% test)) stop ("Object M must be of 'wm' class")
   env <- as.data.frame (as.matrix (env))
-  if (method == 'lm' & test == 'twostep' & dependence == 'M ~ env' & ncol (env) > 1) stop ("Two-step permutation method is not available for multiple linear regression with more than one predictor variable (env)")
+  if ((method == 'lm') & ('twostep' %in% test) & (dependence == 'M ~ env') & (ncol (env) > 1)) stop ("Two-step permutation method is not available for multiple linear regression with more than one predictor variable (env)")
   sitspe <- attr (M, 'sitspe')
   speatt <- attr (M, 'speatt')
 
