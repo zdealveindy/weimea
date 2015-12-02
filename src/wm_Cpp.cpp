@@ -3,7 +3,6 @@
 // [[Rcpp::depends("RcppArmadillo")]]
 
 using namespace Rcpp;
-using namespace arma;
 
 //[[Rcpp::export()]]
 arma::mat stand_tot (arma::mat sitspe) {
@@ -54,7 +53,7 @@ List test_LR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
   }
   r_exp (perm) = r_obs; //observed values is put on the last place of the vector
   t_exp (perm) = t_obs; //observed values is put on the last place of the vector
-  double P = (sum (abs (t_exp) >= abs (t_obs))/2)/(perm+1);
+  double P = sum (abs (t_exp) >= std::abs (t_obs))/(perm+1);
   return List::create (
       _["type"] = "cor",
       _["no.samples"] = sitspe.n_rows,
@@ -94,18 +93,21 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
   double P_mod = NA_REAL;
   double P_LR = NA_REAL;
   double P_two = NA_REAL;
+  arma::mat env_rand;
   
   if (is_in (CharacterVector::create ("standard", "twostep"), test)){
     arma::vec r_exp_sta (perm+1);
     arma::vec t_exp_sta (perm+1);
     for (int nperm = 0; nperm < perm; nperm++){
       arma::mat env_rand = shuffle (env_temp);
-      r_exp_sta [nperm] = as_scalar (cor (M, env_rand));  // original M with randomized R
-      t_exp_sta [nperm] = r_exp_sta [nperm]*sqrt ((env_rand.size () - 2)/(1 - pow (r_exp_sta[nperm], 2)));
+      env_rand = shuffle (env_temp);
+      r_exp_sta (nperm) = as_scalar (cor (M, env_rand));  // original M with randomized R
+      t_exp_sta (nperm) = r_exp_sta(nperm)*sqrt ((env_rand.size () - 2)/(1 - pow (r_exp_sta(nperm), 2.0)));
     }
     r_exp_sta (perm) = r_obs; //observed values is put on the last place of the vector
     t_exp_sta (perm) = t_obs; //observed values is put on the last place of the vector
-    P_sta = (sum (abs (t_exp_sta) >= abs (t_obs))/2)/(perm+1);
+    P_sta = sum (abs (t_exp_sta) >= std::abs (t_obs))/(perm+1.0);
+
   };
   
   if (is_in (CharacterVector::create ("modified", "twostep"), test)){
@@ -113,12 +115,12 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
     arma::vec t_exp_mod (perm+1);
     for (int nperm = 0; nperm < perm; nperm++){
       arma::vec M_rand = wm_rcpp (sitspe_temp, shuffle (speatt_temp));
-      r_exp_mod [nperm] = as_scalar (cor (M_rand, env_temp));  // original M with randomized R
-      t_exp_mod [nperm] = r_exp_mod [nperm]*sqrt ((env_temp.size () - 2)/(1 - pow (r_exp_mod[nperm], 2)));
+      r_exp_mod [nperm] = as_scalar (cor (M_rand, env_temp));  // original R with M from randomized speatt
+      t_exp_mod [nperm] = r_exp_mod [nperm]*sqrt ((env_temp.size () - 2)/(1 - pow (r_exp_mod[nperm], 2.0)));
     }
     r_exp_mod (perm) = r_obs; //observed values is put on the last place of the vector
     t_exp_mod (perm) = t_obs; //observed values is put on the last place of the vector
-    P_mod = (sum (abs (t_exp_mod) >= abs (t_obs))/2)/(perm+1);
+    P_mod = sum (abs (t_exp_mod) >= std::abs (t_obs))/(perm+1);
   };
 
   if (is_in ("twostep", test)){
@@ -135,7 +137,7 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
     }
     r_exp_LR (perm) = r_obs_LR; //observed values is put on the last place of the vector
     t_exp_LR (perm) = t_obs_LR; //observed values is put on the last place of the vector
-    P_LR = (sum (abs (t_exp_LR) >= abs (t_obs_LR))/2)/(perm+1);
+    P_LR = sum (abs (t_exp_LR) >= std::abs (t_obs_LR))/(perm+1);
     if (P_LR <= testLR_P) {P_two = P_mod;} else {P_two = P_sta;};
   };
   
@@ -166,10 +168,6 @@ List fastLm_wm (const arma::mat& X, const arma::colvec& y, bool intercept_includ
   if (intercept_included) {mdf = k-1;} else {mdf = k;};
   int rdf = n - k;      // residual number of degrees of freedom, should be n - no.vars - 1 (but X contains 1 column with 1's for intercept
   double F = (mss/mdf)/(rss/rdf);
-//   // std.errors of coefficients
-//   double s2 = std::inner_product(res.begin(), res.end(), res.begin(), 0.0)/(n - k);
-//   
-//   arma::colvec std_err = arma::sqrt(s2 * arma::diagvec(arma::pinv(arma::trans(X)*X)));  
   return List::create(_["coefficients"] = coef,
                       _["df.residual"]  = rdf,
                       _["df.model"] = mdf,
@@ -199,7 +197,7 @@ List test_LR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, double perm)
   }
   rsq_exp (perm) = rsq_obs; //observed values is put on the last place of the vector
   F_exp (perm) = F_obs; //observed values is put on the last place of the vector
-  double P = sum (abs (F_exp) >= abs (F_obs))/(perm+1);
+  double P = sum (abs (F_exp) >= std::abs (F_obs))/(perm+1);
   return List::create (
       _["type"] = "lm",
       _["no.samples"] = sitspe.n_rows,
@@ -263,7 +261,7 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
       F_exp_sta (nperm) = lm_exp["F.value"];
     }
     F_exp_sta (perm) = F_obs; //observed values is put on the last place of the vector
-    P_sta = sum (abs (F_exp_sta) >= abs (F_obs))/(perm+1);
+    P_sta = sum (abs (F_exp_sta) >= std::abs (F_obs))/(perm+1);
     rsq_adj_sta = 1 - (1/(1-mean (rsq_exp_sta))*(1-rsq_obs));
   };
   
@@ -283,7 +281,7 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
       F_exp_mod [nperm] = lm_exp["F.value"];
     }
     F_exp_mod (perm) = F_obs; //observed values is put on the last place of the vector
-    P_mod = sum (abs (F_exp_mod) >= abs (F_obs))/(perm+1);
+    P_mod = sum (abs (F_exp_mod) >= std::abs (F_obs))/(perm+1);
     rsq_adj_mod = 1 - (1/(1-mean (rsq_exp_mod))*(1-rsq_obs));
   };
   
@@ -309,7 +307,7 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
     }
     rsq_exp_LR (perm) = rsq_obs_LR; //observed values is put on the last place of the vector
     F_exp_LR (perm) = F_obs_LR; //observed values is put on the last place of the vector
-    P_LR = sum (abs (F_exp_LR) >= abs (F_obs_LR))/(perm+1);
+    P_LR = sum (abs (F_exp_LR) >= std::abs (F_obs_LR))/(perm+1);
     if (P_LR <= testLR_P) {P_two = P_mod;} else {P_two = P_sta;};
   };
   
