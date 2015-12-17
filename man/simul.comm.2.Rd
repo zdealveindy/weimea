@@ -58,7 +58,7 @@ The function \code{simul.comm.2} returns \code{list} with 14 items, describing t
 \item \code{r1, r2} Vector of generated species ranges along the first and second gradient, respectively (generated niche breaths).
 \item \code{range1, range2} Vector of realised species ranges along the first and second gradient, respectively, considering the truncation of species response curves by gradient margins (these differ from \code{r1} and \code{r2} especially at the gradient margins, where the generated species niche may be wide, but since the margin cuts the species occurrences, realised species niche is narrower.)
 \item \code{a1, a2, g1, g2} Vectors of shape parameters for curves (used in beta function to generate the shape of the species response curve)
-\item \code{A1.all, A2.all} Matrix (dim = gradient length x number of species) with simulated probabilites of individual specie at individual location along the gradient.
+\item \code{A1.all, A2.all} Matrix (dim = gradient length x number of species) with simulated abundances of individual species at individual locations along the gradient.
 }
 The function \code{sample.comm.2} returns \code{list} of 8 items with parameters of generated community data; the last item contains also all items returned by \code{simul.comm.2} function:
 \itemize{

@@ -106,7 +106,7 @@ test.MR <- function (M, env, method = c('cor'), cor.coef = c('pearson'), depende
     for (i in seq (1, length (res))) rownames (res[[i]]$coef) <- c ('intercept', names (env))
     }
 
-  if (method == 'fourthcorner')   # implementation of fourt.corner.ade doesn't allow to go parallel
+  if (method == 'fourthcorner')   # implementation of fourth.corner.ade doesn't allow to go parallel
   {
       res <- fourth.corner.ade (sitspe = sitspe, speatt = speatt, env = env, fc.test = fc.test, perm = perm)
   }

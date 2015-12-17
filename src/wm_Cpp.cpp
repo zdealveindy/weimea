@@ -65,6 +65,37 @@ List test_LR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
   );
 }
 
+// // Modified version of test_LR, using modified permutation test
+// //[[Rcpp::export()]]
+// List test_LR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector cor_coef, double perm) {
+//   arma::mat sitspe_temp = sitspe (find_finite (env), find_finite (speatt));
+//   arma::mat env_temp = env.elem (find_finite (env));
+//   arma::mat speatt_art = wm_rcpp (sitspe_temp.t (), env_temp);
+//   arma::vec M_art = wm_rcpp (sitspe_temp, speatt_art);
+//   double r_obs = as_scalar (cor (M_art, env_temp));  // calculates Pearson's r correlation coefficient
+//   double t_obs = r_obs*sqrt ((env_temp.size () - 2)/(1 - pow (r_obs, 2.0)));  // calculates t-value according to Student's t formula
+//   arma::vec r_exp (perm+1);
+//   arma::vec t_exp (perm+1);
+//   for (int nperm = 0; nperm < perm; nperm++){
+//     arma::mat speatt_rand = shuffle (speatt_art);
+//     arma::vec M_exp = wm_rcpp (sitspe_temp, speatt_rand);
+//     r_exp [nperm] = as_scalar (cor (M_exp, env_temp));
+//     t_exp [nperm] = r_exp [nperm]*sqrt ((env_temp.size () - 2)/(1 - pow (r_exp[nperm], 2)));
+//   }
+//   r_exp (perm) = r_obs; //observed values is put on the last place of the vector
+//   t_exp (perm) = t_obs; //observed values is put on the last place of the vector
+//   double P = sum (abs (t_exp) >= std::abs (t_obs))/(perm+1);
+//   return List::create (
+//       _["type"] = "cor",
+//       _["no.samples"] = sitspe.n_rows,
+//       _["no.species"] = sitspe.n_cols,
+//       _["cor.coef"] = cor_coef,
+//       _["statistic"] = t_obs,
+//       _["estimate"] = r_obs,
+//       _["cor"] = P
+//   );
+// }
+
 
 //[[Rcpp::export()]]
 bool is_in (CharacterVector x, CharacterVector table){
@@ -238,6 +269,7 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
   double rsq_obs = lm_obs["R.squared"];
   double rsq_adj_sta = NA_REAL;
   double rsq_adj_mod = NA_REAL;
+  double rsq_adj_mod2 = NA_REAL;
   double F_obs = lm_obs["F.value"];
   double P_par = R::pf (F_obs, lm_obs["df.model"], lm_obs["df.residual"], FALSE, FALSE);
   double P_sta = NA_REAL;
@@ -283,6 +315,7 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
     F_exp_mod (perm) = F_obs; //observed values is put on the last place of the vector
     P_mod = sum (abs (F_exp_mod) >= std::abs (F_obs))/(perm+1);
     rsq_adj_mod = 1 - (1/(1-mean (rsq_exp_mod))*(1-rsq_obs));
+    rsq_adj_mod2 = (rsq_obs - mean (rsq_exp_mod))/stddev (rsq_exp_mod);
   };
   
   if (is_in ("twostep", test)){
@@ -316,6 +349,7 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
       _["rsq.obs"] = rsq_obs,
       _["rsq.adj.sta"] = rsq_adj_sta,
       _["rsq.adj.mod"] = rsq_adj_mod,
+      _["rsq.adj.mod2"] = rsq_adj_mod2,
       _["F.obs"] = F_obs,
       _["P.par"] = P_par,
       _["P.sta"] = P_sta,

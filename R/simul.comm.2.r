@@ -38,7 +38,7 @@
 #' \item \code{r1, r2} Vector of generated species ranges along the first and second gradient, respectively (generated niche breaths).
 #' \item \code{range1, range2} Vector of realised species ranges along the first and second gradient, respectively, considering the truncation of species response curves by gradient margins (these differ from \code{r1} and \code{r2} especially at the gradient margins, where the generated species niche may be wide, but since the margin cuts the species occurrences, realised species niche is narrower.)
 #' \item \code{a1, a2, g1, g2} Vectors of shape parameters for curves (used in beta function to generate the shape of the species response curve)
-#' \item \code{A1.all, A2.all} Matrix (dim = gradient length x number of species) with simulated probabilites of individual specie at individual location along the gradient. 
+#' \item \code{A1.all, A2.all} Matrix (dim = gradient length x number of species) with simulated abundances of individual species at individual locations along the gradient. 
 #' }
 #' The function \code{sample.comm.2} returns \code{list} of 8 items with parameters of generated community data; the last item contains also all items returned by \code{simul.comm.2} function:
 #' \itemize{
@@ -190,29 +190,15 @@ sample.comm.2 <- function (simul.comm = simul.comm.2 (), Np = 300, sample.x1 = N
   sc <- simul.comm
   BASED.ON <- c('individuals', 'species')
   based.on <- match.arg (based.on, BASED.ON)
-  
-  #  #This is beta function for generating niches
-  #  curve <- function(Ao,m,r,a,g,x)  {
-  #    (Ao*((((x-m)/r)+(a/(a+g)))^a)*((1-(((x-m)/r)+(a/(a+g))))^g))/(((a/(a+g))^a)*((1-(a/(a+g)))^g))
-  #  }
-  
-  #Random sample intervals along gradient
+
+    #Random sample intervals along gradient
   if (is.null (sample.x1)) sample.x1 <- trunc(sample(c(2:sc$gr1.length)-1,Np, replace = T))
   if (is.null (sample.x2)) sample.x2 <- trunc(sample(c(2:sc$gr2.length)-1,Np, replace = T))
-  
-  #  A1.all <- matrix(0,nrow=simul.comm$gr1.length, ncol=sc$totS) #response abundances
-  #  for(L in 1:sc$totS){
-  #    A1.all[,L] <- curve(sc$Ao1[L],sc$m1[L],sc$r1[L],sc$a1[L],sc$g1[L], 1:simul.comm$gr1.length)
-  #  }
-  #  A2.all <- matrix(0,nrow=simul.comm$gr2.length, ncol=sc$totS) #response abundances
-  #  for(L in 1:sc$totS){
-  #    A2.all[,L] <- curve(sc$Ao2[L],sc$m2[L],sc$r2[L],sc$a2[L],sc$g2[L], 1:simul.comm$gr2.length)
-  #  } 
-  
+
   A1 <- simul.comm$A1.all[sample.x1, ]
   A2 <- simul.comm$A2.all[sample.x2, ]
   
-  p.mat <- A1*A2  # probability of occurrence matrix
+  p.mat <- sqrt (A1*A2)  # matrix of joined abundances
   p.mat[is.na (p.mat)] <- 0
   
   a.mat <- p.mat*0 # prepared abundance matrix
