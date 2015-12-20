@@ -19,17 +19,17 @@ test.MR(M, env, method = c("cor"), cor.coef = c("pearson"),
 
 \item{env}{Vector or matrix with variables. See details.}
 
-\item{method}{Statistical method used to analyse the relationship between M (of class \code{wm}) and env (sample attributes); partial match to \code{'lm'}, \code{'aov'}, \code{'cor'}, \code{'kruskal'}, \code{'slope'} and \code{'fourthcorner'}. Currently only \code{'cor'} method implemented.}
+\item{method}{Statistical method used to analyse the relationship between M (of class \code{wm}) and env (sample attributes); partial match to \code{'lm'}, \code{'cor'} and \code{'fourthcorner'}.}
 
-\item{cor.coef}{Correlation coefficient for \code{method = 'cor'}. Partial match to \code{'pearson'}, \code{'spearman'} and \code{'kendal'}. Currently only \code{'pearson'} implemented.}
+\item{cor.coef}{Correlation coefficient for \code{method = 'cor'}. Partial match to \code{'pearson'} and \code{'spearman'}.}
 
 \item{dependence}{Should \code{M} be dependent variable and \code{env} independent (\code{'M ~ env'}), or opposite? Applicable only for \code{method = 'lm'}. Partial match to \code{'M ~ env'} and \code{'env ~ M'}.}
 
 \item{perm}{Number of permutations.}
 
-\item{testLR.perm}{Relevant if \code{test = "twostep"} (default): number of permutations for test of realtionship between \bold{L} and \bold{R} matrices.}
+\item{testLR.perm}{Relevant if \code{test = "twostep"} (default): number of permutations for test of relationship between \bold{L} and \bold{R} matrices.}
 
-\item{test}{Vector of character values. Which test should be conducted? Partial match of vector with \code{'standard'}, \code{'modified'}, \code{'twostep'}, \code{'sequential'} and \code{'all'}.}
+\item{test}{Vector of character values. Which test should be conducted? Partial match of vector with \code{'standard'}, \code{'modified'}, \code{'twostep'}, \code{'sequential'} and \code{'all'}. See \code{Details}.}
 
 \item{fc.test}{Test for the fourthcorner method. \code{fc.test = c(2,4,6)}.}
 

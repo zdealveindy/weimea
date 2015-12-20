@@ -21,8 +21,8 @@ is_in <- function(x, table) {
     .Call('weimea_is_in', PACKAGE = 'weimea', x, table)
 }
 
-test_MR_cor <- function(sitspe, speatt, env, test, cor_coef, perm, testLR_P, testLR_perm) {
-    .Call('weimea_test_MR_cor', PACKAGE = 'weimea', sitspe, speatt, env, test, cor_coef, perm, testLR_P, testLR_perm)
+test_MR_cor_pear <- function(sitspe, speatt, env, test, perm, testLR_P, testLR_perm) {
+    .Call('weimea_test_MR_cor_pear', PACKAGE = 'weimea', sitspe, speatt, env, test, perm, testLR_P, testLR_perm)
 }
 
 fastLm_wm <- function(X, y, intercept_included) {

@@ -67,9 +67,9 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// test_MR_cor
-List test_MR_cor(arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, CharacterVector cor_coef, double perm, double testLR_P, double testLR_perm);
-RcppExport SEXP weimea_test_MR_cor(SEXP sitspeSEXP, SEXP speattSEXP, SEXP envSEXP, SEXP testSEXP, SEXP cor_coefSEXP, SEXP permSEXP, SEXP testLR_PSEXP, SEXP testLR_permSEXP) {
+// test_MR_cor_pear
+List test_MR_cor_pear(arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, double perm, double testLR_P, double testLR_perm);
+RcppExport SEXP weimea_test_MR_cor_pear(SEXP sitspeSEXP, SEXP speattSEXP, SEXP envSEXP, SEXP testSEXP, SEXP permSEXP, SEXP testLR_PSEXP, SEXP testLR_permSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -77,11 +77,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type speatt(speattSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type env(envSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type test(testSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type cor_coef(cor_coefSEXP);
     Rcpp::traits::input_parameter< double >::type perm(permSEXP);
     Rcpp::traits::input_parameter< double >::type testLR_P(testLR_PSEXP);
     Rcpp::traits::input_parameter< double >::type testLR_perm(testLR_permSEXP);
-    __result = Rcpp::wrap(test_MR_cor(sitspe, speatt, env, test, cor_coef, perm, testLR_P, testLR_perm));
+    __result = Rcpp::wrap(test_MR_cor_pear(sitspe, speatt, env, test, perm, testLR_P, testLR_perm));
     return __result;
 END_RCPP
 }

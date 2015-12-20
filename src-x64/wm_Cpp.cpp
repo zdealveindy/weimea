@@ -110,7 +110,7 @@ bool is_in (CharacterVector x, CharacterVector table){
 
   
 //[[Rcpp::export()]]
-List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, CharacterVector cor_coef, double perm, double testLR_P, double testLR_perm) {
+List test_MR_cor_pear (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVector test, double perm, double testLR_P, double testLR_perm) {
   arma::mat sitspe_temp = sitspe.submat (find_finite (env), find_finite (speatt));
   arma::mat speatt_temp = speatt.elem (find_finite (speatt));
   arma::mat env_temp = env.elem (find_finite (env));
@@ -131,7 +131,7 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
     arma::vec t_exp_sta (perm+1);
     for (int nperm = 0; nperm < perm; nperm++){
       arma::mat env_rand = shuffle (env_temp);
-      env_rand = shuffle (env_temp);
+      //env_rand = shuffle (env_temp); not sure why this was here, some remnant
       r_exp_sta (nperm) = as_scalar (cor (M, env_rand));  // original M with randomized R
       t_exp_sta (nperm) = r_exp_sta(nperm)*sqrt ((env_rand.size () - 2)/(1 - pow (r_exp_sta(nperm), 2.0)));
     }
@@ -166,9 +166,9 @@ List test_MR_cor (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVe
       r_exp_LR [nperm] = as_scalar (cor (M_exp, env_rand));
       t_exp_LR [nperm] = r_exp_LR [nperm]*sqrt ((env_rand.size () - 2)/(1 - pow (r_exp_LR[nperm], 2)));
     }
-    r_exp_LR (perm) = r_obs_LR; //observed values is put on the last place of the vector
-    t_exp_LR (perm) = t_obs_LR; //observed values is put on the last place of the vector
-    P_LR = sum (abs (t_exp_LR) >= std::abs (t_obs_LR))/(perm+1);
+    r_exp_LR (testLR_perm) = r_obs_LR; //observed values is put on the last place of the vector
+    t_exp_LR (testLR_perm) = t_obs_LR; //observed values is put on the last place of the vector
+    P_LR = sum (abs (t_exp_LR) >= std::abs (t_obs_LR))/(testLR_perm+1);
     if (P_LR <= testLR_P) {P_two = P_mod;} else {P_two = P_sta;};
   };
   
@@ -338,9 +338,9 @@ List test_MR_lm (arma::mat sitspe, arma::mat speatt, arma::mat env, CharacterVec
       rsq_exp_LR [nperm] = lm_exp_LR["R.squared"];
       F_exp_LR [nperm] = lm_exp_LR["F.value"];
     }
-    rsq_exp_LR (perm) = rsq_obs_LR; //observed values is put on the last place of the vector
-    F_exp_LR (perm) = F_obs_LR; //observed values is put on the last place of the vector
-    P_LR = sum (abs (F_exp_LR) >= std::abs (F_obs_LR))/(perm+1);
+    rsq_exp_LR (testLR_perm) = rsq_obs_LR; //observed values is put on the last place of the vector
+    F_exp_LR (testLR_perm) = F_obs_LR; //observed values is put on the last place of the vector
+    P_LR = sum (abs (F_exp_LR) >= std::abs (F_obs_LR))/(testLR_perm+1);
     if (P_LR <= testLR_P) {P_two = P_mod;} else {P_two = P_sta;};
   };
   
