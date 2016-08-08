@@ -2,11 +2,15 @@
 #' @param R,env Matrix of sample attributes.
 #' @param L,sitspe Matrix of species composition.
 #' @param Q,speatt Matrix of species attributes
+#' @param chessel Logical; should the Chessel's variant of the fourth corner statistic be returned? Default is \code{FALSE}
 #' @param fc.test Test to be chosen for fourthcorner analysis.
 #' @param perm Number of permutations.
 #' @param x,object Object of 'wm' class.
 #' @param ... Other arguments passing into \code{print} or \code{summary} functions (not implemented yet).
-fourth.corner <- function (R, L, Q)
+#' @details 
+#' Chessel's version of the fourth corner statistic has been introduced by Peres-Neto et al. (2016), to rescale the fourth corner r statistic into the range of -1 and 1. This is achieved by dividing the observed fourth corner r by square root of the first eigenvalue for correspondance analysis of L (sitspe) matrix. 
+#' @export
+fourth.corner <- function (R, L, Q, chessel = FALSE)
 {
   R <- as.matrix (R)
   L <- as.matrix (L)
@@ -15,21 +19,20 @@ fourth.corner <- function (R, L, Q)
   missing.Q <- ifelse (any (is.na (Q)), TRUE, FALSE)
   missing.R <- ifelse (any (is.na (R)), TRUE, FALSE)
   
-  if (!missing.Q & !missing.R) r.h <- fourth.corner.0 (R, L, Q)
+  if (!missing.Q & !missing.R) r.h <- fourth.corner.0 (R, L, Q, chessel = chessel)
   if (missing.Q & !missing.R)
-    r.h <- apply (Q, 2, FUN = function (q) {L <- L[,!is.na (q)]; q <- q[!is.na (q)]; fourth.corner.0 (R, L, q)})
+    r.h <- apply (Q, 2, FUN = function (q) {L <- L[,!is.na (q)]; q <- q[!is.na (q)]; fourth.corner.0 (R, L, q, chessel = chessel)})
   if (!missing.Q & missing.R)
-    r.h <- t(apply (R, 2, FUN = function (r) {L <- L[!is.na (r),]; r <- r[!is.na (r)]; fourth.corner.0 (r, L, Q)}))
+    r.h <- t(apply (R, 2, FUN = function (r) {L <- L[!is.na (r),]; r <- r[!is.na (r)]; fourth.corner.0 (r, L, Q, chessel = chessel)}))
   if (missing.Q & missing.R)
-    r.h <- apply (Q, 2, FUN = function (q) apply (R, 2, FUN = function (r) {L <- L[!is.na (r), !is.na (q)]; q <- q[!is.na (q)]; r <- r[!is.na (r)]; fourth.corner.0 (r, L, q)}))
+    r.h <- apply (Q, 2, FUN = function (q) apply (R, 2, FUN = function (r) {L <- L[!is.na (r), !is.na (q)]; q <- q[!is.na (q)]; r <- r[!is.na (r)]; fourth.corner.0 (r, L, q, chessel = chessel)}))
   if (is.null (colnames (r.h))) colnames (r.h) <- colnames (Q)
   if (is.null (rownames (r.h))) rownames (r.h) <- colnames (R)
   class (r.h) <- 'fc'
   return (r.h)
 }  
 
-
-fourth.corner.0 <- function (R, L, Q)  # this can be used only in case of no missing values in Q
+fourth.corner.0 <- function (R, L, Q, chessel)  # this can be used only in case of no missing values in Q
 {
   W.k <- diag (colSums (L))  
   Q <- as.matrix (Q)
@@ -54,6 +57,7 @@ fourth.corner.0 <- function (R, L, Q)  # this can be used only in case of no mis
   
   r.h <- t(apply (R.std, 2, FUN = function (R.h.std) (t(R.h.std) %*% W.n %*% R.h.std) ^-1 %*% t(R.h.std) %*% W.n %*% X.P))
   colnames (r.h) <- colnames (Q)
+  if (chessel) r.h <- r.h/sqrt (vegan::cca (L)$CA$eig[1])
   return (r.h)
 }
 
@@ -68,7 +72,7 @@ summary.fc <- function (object, ...) print (object)
 
 #' @export
 #' @rdname fourth.corner
-fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm)
+fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm, chessel = FALSE)
 {
   R <- as.data.frame (env)
   L <- as.data.frame (sitspe)
@@ -77,23 +81,23 @@ fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm)
   missing.Q <- ifelse (any (is.na (Q)), TRUE, FALSE)
   missing.R <- ifelse (any (is.na (R)), TRUE, FALSE)
   
-  if (!missing.Q & !missing.R) r.h <- fourth.corner.ade0 (R = R, L = L, Q = Q, fc.test = fc.test, perm = perm)
+  if (!missing.Q & !missing.R) r.h <- fourth.corner.ade0 (R = R, L = L, Q = Q, fc.test = fc.test, perm = perm, chessel = chessel)
   if (missing.Q & !missing.R){
-    r.h <- sapply (names (Q), FUN = function (q) {L1 <- L[,!is.na (Q[,q]), drop = FALSE]; Q1 <- Q[!is.na (Q[,q]), q, drop = FALSE]; fourth.corner.ade0 (R = R, L = L1, Q = Q1, fc.test = fc.test, perm = perm)}, simplify = FALSE)
+    r.h <- sapply (names (Q), FUN = function (q) {L1 <- L[,!is.na (Q[,q]), drop = FALSE]; Q1 <- Q[!is.na (Q[,q]), q, drop = FALSE]; fourth.corner.ade0 (R = R, L = L1, Q = Q1, fc.test = fc.test, perm = perm, chessel = chessel)}, simplify = FALSE)
     r.h <- do.call (rbind.data.frame, r.h)
     rownames (r.h) <- r.h$names
     r.h <- r.h[,-1]
   }
   
   if (!missing.Q & missing.R){
-    r.h <- sapply (names (R), FUN = function (r) {L1 <- L[!is.na (R[,r]),, drop = FALSE]; R1 <- R[!is.na (R[,r]), r, drop = FALSE]; fourth.corner.ade0 (R = R1, L = L1, Q = Q, fc.test = fc.test, perm = perm)}, simplify = FALSE)
+    r.h <- sapply (names (R), FUN = function (r) {L1 <- L[!is.na (R[,r]),, drop = FALSE]; R1 <- R[!is.na (R[,r]), r, drop = FALSE]; fourth.corner.ade0 (R = R1, L = L1, Q = Q, fc.test = fc.test, perm = perm, chessel = chessel)}, simplify = FALSE)
     r.h <- do.call (rbind.data.frame, r.h)
     rownames (r.h) <- r.h$names
     r.h <- r.h[,-1]
   }
   
   if (missing.Q & missing.R){
-    r.h <- sapply (names (Q), FUN = function (q) sapply (names (R), FUN = function (r) {L1 <- L[!is.na (R[,r]), !is.na (Q[,q])]; Q1 <- Q[!is.na (Q[,q]), q, drop = FALSE]; R1 <- R[!is.na (R[,r]), r, drop = FALSE]; fourth.corner.ade0 (R = R1, L = L1, Q = Q1, fc.test = fc.test, perm = perm)}, simplify = FALSE), simplify = FALSE)
+    r.h <- sapply (names (Q), FUN = function (q) sapply (names (R), FUN = function (r) {L1 <- L[!is.na (R[,r]), !is.na (Q[,q])]; Q1 <- Q[!is.na (Q[,q]), q, drop = FALSE]; R1 <- R[!is.na (R[,r]), r, drop = FALSE]; fourth.corner.ade0 (R = R1, L = L1, Q = Q1, fc.test = fc.test, perm = perm, chessel = chessel)}, simplify = FALSE), simplify = FALSE)
     r.h <- do.call (rbind.data.frame, lapply (r.h, FUN = function (y) do.call (rbind.data.frame, y)))
     rownames (r.h) <- r.h$names
     r.h <- r.h[,-1]
@@ -102,10 +106,11 @@ fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm)
 }
 
 
-fourth.corner.ade0 <- function (R, L, Q, fc.test, perm)
+fourth.corner.ade0 <- function (R, L, Q, fc.test, perm, chessel)
 {
   temp <- ade4::fourthcorner (tabR = R, tabL = L, tabQ = Q, modeltype = fc.test, nrepet = perm)
   temp <- do.call (cbind.data.frame, temp$tabD[c('names', 'obs', 'pvalue')])
   names (temp) <-  c('names', 'fourthcorner', 'P.value')
+  if (chessel) temp[,'fourthcorner'] <- temp[,'fourthcorner']/sqrt (vegan::cca (L)$CA$eig[1])
   return (temp)
 }

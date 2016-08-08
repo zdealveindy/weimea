@@ -26,7 +26,7 @@
 #' @examples
 #' data (vltava)
 #' test.LR (M = wm (vltava$spe, vltava$ell), vltava$env[,'pH', drop = FALSE], type = 'cor')
-
+#' @importFrom stats anova cor cor.test lm quantile rbinom resid rlnorm rnorm runif symnum
 #' @export
 test.LR <- function (M, env, type = "cor", cor.coef = c("pearson", "kendall", "spearman"), exact = FALSE, alpha = 0.001, sqrt = F, perm = 499)
 {

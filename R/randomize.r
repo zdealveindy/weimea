@@ -10,7 +10,7 @@
 #' @param export.cl ??
 #' @param ... parameters passed to other functions.
 #' @author David Zeleny (zeleny.david@@gmail.com)
-
+#' @importFrom utils setWinProgressBar winProgressBar
 #' @export
 randomize <- function (x, ...) UseMethod ('randomize')
 

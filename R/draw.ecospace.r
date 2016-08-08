@@ -15,6 +15,7 @@
 #' @examples
 #' draw.ecospace (sample.comm.2 (simul.comm.2 (totS = 100)), resolution = 100)
 #' @rdname draw.ecospace
+#' @importFrom graphics axis lines par plot plot.new plot.window points title
 #' @export
 draw.ecospace <- function (sampled.comm, resolution = 200, colors = NULL, species = NULL, sort = TRUE, asp = 1, sample.pch = 3, sample.cex = .5, species.pch = 16, species.cex = 1, xlab = 'gradient 1', ylab = 'gradient 2', axes = T, box = T, ...)
 {
