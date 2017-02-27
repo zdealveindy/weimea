@@ -16,4 +16,3 @@ rangeWM(object, max = 9, recalculate = T)
 \description{
 Changes the range of species attributes
 }
-

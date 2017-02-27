@@ -76,4 +76,3 @@ summary (mopet (mean.eiv, vltava$group, perm = 49, method = 'krusk'))
 \seealso{
 \code{\link{wm}}
 }
-

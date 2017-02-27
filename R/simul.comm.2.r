@@ -22,11 +22,12 @@
 #' sc <- sample.comm.2 (simul.comm.2 (gr1.length = 5000, gr2.length = 3000, totS = 300),
 #'  Np = 200, pa = FALSE, seed = 123)
 #' library (vegan)
-#' nmds <- metaMDS (sc$a.mat)
+#' set.seed (1234)
+#' nmds <- metaMDS (sc$a.mat, try = 1)
 #' par (mfrow = c(1,2))
-#' ordiplot (nmds, display = 'si', main = 'Environmental gradient 1')
+#' ordiplot (nmds, display = 'si', main = 'Environmental gradient 1', type = 'n')
 #' points (nmds, display = 'si', cex = scale (sc$sample.x1, center = FALSE)*2, pch = 21, bg = 'white')
-#' ordiplot (nmds, display = 'si', main = 'Environmental gradient 2')
+#' ordiplot (nmds, display = 'si', main = 'Environmental gradient 2', type = 'n')
 #' points (nmds, display = 'si', cex = scale (sc$sample.x2, center = FALSE)*2, pch = 21, bg = 'white')
 #' @return The function \code{simul.comm.2} returns \code{list} with 14 items, describing the set of parameters used to simulate community of species response curves:
 #' \itemize{

@@ -34,4 +34,3 @@ Function applied on the object of class \code{wm}, which returns values of weigh
 \author{
 David Zeleny (zeleny.david@gmail.com)
 }
-

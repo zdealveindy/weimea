@@ -57,9 +57,6 @@ Environmental variables include:
 \item COVERE32	estimated cover of tree and shrub layer [\%] (merged tree and shrub estimations, using formula p.tree + p.shrub - p.tree*p.shrub
 }
 }
-\author{
-David Zeleny (\email{zeleny.david@gmail.com})
-}
 \references{
 Ellenberg H., Weber H.E., Dull R., Wirth V., Werner W. & Paulissen D. 1991. Zeigerwerte von Pflanzen in Mitteleuropa. Scripta Geobotanica 18: 1-248.
 
@@ -71,7 +68,9 @@ McCune B. & Keon D. (2002): Equations for potential annual direct incident radia
 
 Zeleny D. & Chytry M. (2007): Environmental control of vegetation pattern in deep river valleys of the Bohemian Massif. Preslia, 79: 205-222.
 }
+\author{
+David Zeleny (\email{zeleny.david@gmail.com})
+}
 \keyword{vltava.ell}
 \keyword{vltava.env}
 \keyword{vltava.spe}
-

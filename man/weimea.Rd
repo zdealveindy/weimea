@@ -11,4 +11,3 @@ Weimea - package for calculating and testing weighted-means of species attribute
 \author{
 David Zeleny
 }
-

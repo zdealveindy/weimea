@@ -2,9 +2,9 @@
 % Please edit documentation in R/fourth.corner.r
 \name{fourth.corner}
 \alias{fourth.corner}
-\alias{fourth.corner.ade}
 \alias{print.fc}
 \alias{summary.fc}
+\alias{fourth.corner.ade}
 \title{calculates the fourth-corner statistic (according to Legendre et al. 1997, compiled according to Peres-Neto et al. 2012)}
 \usage{
 fourth.corner(R, L, Q)
@@ -38,4 +38,3 @@ calculates the fourth-corner statistic (according to Legendre et al. 1997, compi
 \details{
 Chessel's version of the fourth corner statistic has been introduced by Peres-Neto et al. (2016), to rescale the fourth corner r statistic into the range of -1 and 1. This is achieved by dividing the observed fourth corner r by square root of the first eigenvalue for correspondance analysis of L (sitspe) matrix.
 }
-

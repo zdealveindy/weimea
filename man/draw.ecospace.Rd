@@ -43,4 +43,3 @@ draw.ecospace (sample.comm.2 (simul.comm.2 (totS = 100)), resolution = 100)
 \author{
 David Zeleny (zeleny.david@gmail.com)
 }
-
