@@ -27,7 +27,7 @@ is.wm(object)
 \arguments{
 \item{sitspe}{Matrix or data.frame with community data matrix (sites x species)}
 
-\item{speatt}{Vector, matrix or data.frame with species attributes (species x attributes)}
+\item{speatt}{Vector, matrix or data.frame with species attributes (species x attributes). This can be numeric or factor.}
 
 \item{object, x}{Object of the class \code{wm}}
 

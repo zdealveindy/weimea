@@ -3,7 +3,7 @@
 #' Function \code{wm} calculates weighted mean of species attributes, using matrices of species composition and species attributes. Other functions are for handling the objects of class \code{wm}.
 #' 
 #' @param sitspe Matrix or data.frame with community data matrix (sites x species)
-#' @param speatt Vector, matrix or data.frame with species attributes (species x attributes)
+#' @param speatt Vector, matrix or data.frame with species attributes (species x attributes). This can be \code{numeric} or \code{factor}.
 #' @param object,x Object of the class \code{wm}
 #' @param drop  In function \code{[.wm]} if \code{TRUE} coerces the result to the lowest possible dimension (i.e. vector if matrix has only one column). Currently not implemented, change into \code{TRUE} will have no effect.
 #' @param i,j Subscripts of the matrix of the class "Wm" (rows and columns).
@@ -35,12 +35,15 @@ wm <- function (sitspe, speatt)
     NUM <- function(dataframe)dataframe[,sapply(dataframe,is.numeric), drop = F]
     FAC <- function(dataframe)dataframe[,sapply(dataframe,is.factor), drop = F]
     require(ade4)
-    if (is.null(ncol(NUM(df)))) {
-      DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
-      names(DF)[1] <- colnames(df)[which(sapply(df, is.numeric))]
-    } else {
-      DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
-    }
+    if (is.null(ncol(FAC(df))) || ncol(FAC(df)) == 0)
+      DF <- df else {
+        if (is.null(ncol(NUM(df))) || ncol(NUM(df)) == 0) {
+          DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
+          names(DF)[1] <- colnames(df)[which(sapply(df, is.numeric))]
+        } else {
+          DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
+        }
+      }
     return(DF)
   } 
   sitspe <- as.matrix (sitspe)
