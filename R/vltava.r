@@ -28,6 +28,15 @@
 #' \item COVERE1	estimated cover of herb layer [\%]
 #' \item COVERE0	estimated cover of moss layer [\%]
 #' \item COVERE32	estimated cover of tree and shrub layer [\%] (merged tree and shrub estimations, using formula p.tree + p.shrub - p.tree*p.shrub
+#' \item GROUP Classsification of the sample into one of four vegetation types using numerical classification (Ward's agglomerative clustering applied on Euclidean distances using log transformed compositional data about vltava$spe matrix with herb + merged tree and shrub species).
+#' \item TBV.NO	Turboveg number - unique identifier under which the plot is stored in Czech National Phytosociological Database (http://www.sci.muni.cz/botany/vegsci/dbase.php?lang=en)
+#' \item TRANSECT	transect number
+#' \item LIGHT	mean Ellenberg indicator values for light, calculated as unweighted mean from data in Vltava spe (herbs + merged trees and shrubs)
+#' \item TEMP	mean Ellenberg indicator values for temperature, calculated as unweighted mean from data in Vltava spe (herbs + merged trees and shrubs)
+#' \item CONT	mean Ellenberg indicator values for continentality, calculated as unweighted mean from data in Vltava spe (herbs + merged trees and shrubs)
+#' \item MOIST	mean Ellenberg indicator values for moisture, calculated as unweighted mean from data in Vltava spe (herbs + merged trees and shrubs)
+#' \item REACT	mean Ellenberg indicator values for soil reaction calculated as unweighted mean from data in Vltava spe (herbs + merged trees and shrubs)
+#' \item NUTR	mean Ellenberg indicator values for nutrients, calculated as unweighted mean from data in Vltava spe (herbs + merged trees and shrubs)
 #' }
 #' @usage data (vltava)
 #' @format
@@ -36,7 +45,6 @@
 #'  \item \code{spe} Compositional matrix of all species (sample x species, percentage cover scale)
 #'  \item \code{ell} Species Ellenberg indicator values (species x Ellenberg values for light, temperature, continentality, moisture, reaction and nutrients, compiled from Ellenberg et al. 1991).
 #'  \item \code{env} Environmental variables (see Details).
-#'  \item \code{group} Classsification of the sample into one of four vegetation types using numerical classification (Ward's agglomerative clustering applied on Euclidean distances using log transformed compositional data about vltava$spe matrix with herb + merged tree and shrub species).
 #'  \item \code{spnames} Data frame with two columns: \code{Full.species.name} - original species names, and \code{Layer} - vegetation layer, in which the species occur (1 - herb layer, 23 - shrub or/and tree layer)
 #'  \item \code{herbs} list with the following items, related only to the subset of herb species:
 #'    \itemize{

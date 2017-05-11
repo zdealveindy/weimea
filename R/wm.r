@@ -31,7 +31,21 @@
 #' @export
 wm <- function (sitspe, speatt)
 {
+  dummy <- function(df) {  
+    NUM <- function(dataframe)dataframe[,sapply(dataframe,is.numeric), drop = F]
+    FAC <- function(dataframe)dataframe[,sapply(dataframe,is.factor), drop = F]
+    require(ade4)
+    if (is.null(ncol(NUM(df)))) {
+      DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
+      names(DF)[1] <- colnames(df)[which(sapply(df, is.numeric))]
+    } else {
+      DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
+    }
+    return(DF)
+  } 
   sitspe <- as.matrix (sitspe)
+  speatt <- data.frame (unclass (speatt))
+  speatt <- as.matrix (dummy (speatt))
   speatt <- as.matrix (speatt)
   if (is.null (colnames (speatt)))  colnames (speatt) <- paste ('speatt', 1:ncol (speatt), sep = '_')
   if (any (is.na(colnames(speatt)))) colnames (speatt)[is.na (colnames (speatt))] <- paste ('speatt', seq (1, sum (is.na (colnames (speatt)))), sep = '_')
@@ -42,6 +56,7 @@ wm <- function (sitspe, speatt)
   attr(wm.temp, 'class') <- c('wm')
   wm.temp
 }
+
 
 #' @rdname wm
 #' @export

@@ -67,7 +67,7 @@ Function performing standard, modified, two-step and sequential test to calculat
 \details{
 Currently implemented statistical methods are (\code{'cor', 'lm', 'fourthcorner'}).
 
-Argument \code{env} can be vector or matrix with one column. Only in case of linear regression (\code{method = 'lm'}) is possible to use matrix with several variables, which will be all used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
+Argument \code{env} can be vector or matrix with one column. Only in case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 
 Difference between \code{method = 'lm'} and \code{'aov'} is in the format of summary tables, returned by \code{summary.wm} function. In case of 'aov', this summary is expressed in the traditional language of ANOVA rather than linear models.
 
