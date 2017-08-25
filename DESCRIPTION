@@ -1,15 +1,15 @@
 Package: weimea
 Type: Package
 Title: Weighted mean analysis
-Version: 0.67
-Date: 2017-05-12
+Version: 0.69
+Date: 2017-08-25
 Author: David Zeleny
 Maintainer: David Zeleny <zeleny.david@gmail.com>
-Description: Package for analysis and testing of relationship of community-weighted
-    mean (wei mea) of species attributes with sample attributes. Offers a range of
-    functions for handling, analysing and testing the community-weighted mean values used in
-    analysis of multivariate community data. Examples of use: community weighted
-    mean of species traits, mean Ellenberg indicator values etc.
+Description: Package for analysis and testing of relationship of community-
+    weighted mean (wei mea) of species attributes with sample attributes. Offers a
+    range of functions for handling, analysing and testing the community-weighted
+    mean values used in analysis of multivariate community data. Examples of use:
+    community weighted mean of species traits, mean Ellenberg indicator values etc.
 LazyData: TRUE
 LinkingTo: Rcpp, RcppArmadillo
 Imports:

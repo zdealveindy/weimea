@@ -34,14 +34,13 @@ wm <- function (sitspe, speatt)
   dummy <- function(df) {  
     NUM <- function(dataframe)dataframe[,sapply(dataframe,is.numeric), drop = F]
     FAC <- function(dataframe)dataframe[,sapply(dataframe,is.factor), drop = F]
-    require(ade4)
     if (is.null(ncol(FAC(df))) || ncol(FAC(df)) == 0)
       DF <- df else {
         if (is.null(ncol(NUM(df))) || ncol(NUM(df)) == 0) {
-          DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
+          DF <- data.frame(NUM(df), ade4:::acm.disjonctif(FAC(df)))
           names(DF)[1] <- colnames(df)[which(sapply(df, is.numeric))]
         } else {
-          DF <- data.frame(NUM(df), acm.disjonctif(FAC(df)))
+          DF <- data.frame(NUM(df), ade4:::acm.disjonctif(FAC(df)))
         }
       }
     return(DF)
