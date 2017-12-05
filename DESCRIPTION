@@ -1,8 +1,13 @@
 Package: weimea
 Type: Package
 Title: Weighted mean analysis
+<<<<<<< HEAD
 Version: 0.70
 Date: 2017-12-05
+=======
+Version: 0.69
+Date: 2017-08-25
+>>>>>>> 3da9d5ca18d55a97cd5dfab45cc4943df83cfb13
 Author: David Zeleny
 Maintainer: David Zeleny <zeleny.david@gmail.com>
 Description: Package for analysis and testing of relationship of community-
