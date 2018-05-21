@@ -1,8 +1,8 @@
 Package: weimea
 Type: Package
-Title: Weighted mean analysis
-Version: 0.1.0
-Date: 2018-05-21
+Title: Weighted Mean Analysis
+Version: 0.1.1
+Date: 2018-05-22
 Author: David Zeleny
 Maintainer: David Zeleny <zeleny.david@gmail.com>
 Description: Analysing and testing the relationship community-
@@ -19,8 +19,6 @@ Imports:
     parallel,
     RColorBrewer,
     Rcpp (>= 0.12.1)
-Depends:
-    RcppArmadillo
 License: GPL-2
 RoxygenNote: 6.0.1
 SystemRequirements: GNU make
