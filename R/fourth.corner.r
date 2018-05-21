@@ -5,7 +5,7 @@
 #' @param chessel Logical; should the Chessel's variant of the fourth corner statistic be returned? Default is \code{FALSE}
 #' @param fc.test Test to be chosen for fourthcorner analysis.
 #' @param perm Number of permutations.
-#' @param x,object Object of 'wm' class.
+#' @param x,object Object of 'cwm' class.
 #' @param ... Other arguments passing into \code{print} or \code{summary} functions (not implemented yet).
 #' @details 
 #' Chessel's version of the fourth corner statistic has been introduced by Peres-Neto et al. (2016), to rescale the fourth corner r statistic into the range of -1 and 1. This is achieved by dividing the observed fourth corner r by square root of the first eigenvalue for correspondance analysis of L (sitspe) matrix. 

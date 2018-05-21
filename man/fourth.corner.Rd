@@ -7,7 +7,7 @@
 \alias{fourth.corner.ade}
 \title{calculates the fourth-corner statistic (according to Legendre et al. 1997, compiled according to Peres-Neto et al. 2012)}
 \usage{
-fourth.corner(R, L, Q)
+fourth.corner(R, L, Q, chessel = FALSE)
 
 \method{print}{fc}(x, ...)
 
@@ -22,15 +22,15 @@ fourth.corner.ade(sitspe, speatt, env, fc.test, perm, chessel = FALSE)
 
 \item{Q, speatt}{Matrix of species attributes}
 
-\item{x, object}{Object of 'wm' class.}
+\item{chessel}{Logical; should the Chessel's variant of the fourth corner statistic be returned? Default is \code{FALSE}}
+
+\item{x, object}{Object of 'cwm' class.}
 
 \item{...}{Other arguments passing into \code{print} or \code{summary} functions (not implemented yet).}
 
 \item{fc.test}{Test to be chosen for fourthcorner analysis.}
 
 \item{perm}{Number of permutations.}
-
-\item{chessel}{Logical; should the Chessel's variant of the fourth corner statistic be returned? Default is \code{FALSE}}
 }
 \description{
 calculates the fourth-corner statistic (according to Legendre et al. 1997, compiled according to Peres-Neto et al. 2012)

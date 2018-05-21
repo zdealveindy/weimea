@@ -2,17 +2,17 @@
 % Please edit documentation in R/randomize.r
 \name{randomize}
 \alias{randomize}
-\alias{randomize.wm}
+\alias{randomize.cwm}
 \title{Weighted mean calculated from randomized species attributes}
 \usage{
 randomize(x, ...)
 
-\method{randomize}{wm}(x, permutations = 1, FUN = function(y) y,
+\method{randomize}{cwm}(x, permutations = 1, FUN = function(y) y,
   progress.bar = F, parallel = NULL, library.par = NULL,
   export.cl = NULL, ...)
 }
 \arguments{
-\item{x}{object of the class \code{wm}}
+\item{x}{object of the class \code{cwm}}
 
 \item{...}{parameters passed to other functions.}
 
@@ -29,7 +29,7 @@ randomize(x, ...)
 \item{export.cl}{??}
 }
 \description{
-Function applied on the object of class \code{wm}, which returns values of weighted mean calculated from randomized species attributes.
+Function applied on the object of class \code{cwm}, which returns values of weighted mean calculated from randomized species attributes.
 }
 \author{
 David Zeleny (zeleny.david@gmail.com)

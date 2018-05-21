@@ -1,7 +1,7 @@
 #' Weighted mean calculated from randomized species attributes
 #' 
-#' Function applied on the object of class \code{wm}, which returns values of weighted mean calculated from randomized species attributes.
-#' @param x object of the class \code{wm}
+#' Function applied on the object of class \code{cwm}, which returns values of weighted mean calculated from randomized species attributes.
+#' @param x object of the class \code{cwm}
 #' @param permutations number of randomizations
 #' @param FUN function to be applied on the column of calculated weighted mean values
 #' @param progress.bar logical value, should be the progress bar indicating the progress of the calculation launched?
@@ -16,16 +16,16 @@ randomize <- function (x, ...) UseMethod ('randomize')
 
 #' @rdname randomize
 #' @export
-randomize.wm <- function (x, permutations = 1, FUN = function (y) y, progress.bar = F, parallel = NULL, library.par = NULL, export.cl = NULL, ...)
+randomize.cwm <- function (x, permutations = 1, FUN = function (y) y, progress.bar = F, parallel = NULL, library.par = NULL, export.cl = NULL, ...)
 {
-  if (!is.wm (x)) stop ("Object x is not of class 'wm'")
+  if (!is.cwm (x)) stop ("Object x is not of class 'cwm'")
   if (progress.bar & is.null (parallel)) win.pb <- winProgressBar(title = "Permutation progress bar", label = "", min = 0, max = permutations, initial = 0, width = 300)
   sitspe <- attr (x, 'sitspe')
   speatt <- attr (x, 'speatt')
-  wm.rand <- function (sitspe, speatt)
+  cwm.rand <- function (sitspe, speatt)
   {
     speatt.rand <- apply (speatt, 2, FUN = function (x) {pointer <- which (!is.na (x)); x[pointer] <- sample (x[pointer]); x})
-    wm (sitspe, speatt.rand) 
+    cwm (sitspe, speatt.rand) 
   }
   if (is.null (parallel))
   {
@@ -33,7 +33,7 @@ randomize.wm <- function (x, permutations = 1, FUN = function (y) y, progress.ba
     for (perm in seq (1, permutations))
     {
       if (progress.bar) setWinProgressBar (win.pb, perm)
-      temp.result[[perm]] <- lapply (list (wm.rand (sitspe = sitspe, speatt = speatt)), FUN = FUN)[[1]]
+      temp.result[[perm]] <- lapply (list (cwm.rand (sitspe = sitspe, speatt = speatt)), FUN = FUN)[[1]]
     }
   }  
   
@@ -41,13 +41,13 @@ randomize.wm <- function (x, permutations = 1, FUN = function (y) y, progress.ba
   {
     #require (parallel)
     cl <- parallel::makeCluster(parallel)
-    parallel::clusterExport (cl, varlist = c("FUN", "speatt", "sitspe", "library.par", "wm.rand", "wm"), envir = environment ())
+    parallel::clusterExport (cl, varlist = c("FUN", "speatt", "sitspe", "library.par", "cwm.rand", "cwm"), envir = environment ())
     #parallel::clusterExport (cl, eval (call ('library', 'weimea')))
     if (!is.null (export.cl)) parallel::clusterExport (cl, export.cl)
     if (!is.null (library.par)) parallel::clusterEvalQ (cl, eval (call ('library', library.par)))
     temp.result <- parallel::parLapply (cl, seq (1, permutations), fun = function (x)
     {
-      lapply (list (wm.rand (sitspe, speatt)), FUN = FUN)[[1]]
+      lapply (list (cwm.rand (sitspe, speatt)), FUN = FUN)[[1]]
     })
     parallel::stopCluster (cl)
   }
