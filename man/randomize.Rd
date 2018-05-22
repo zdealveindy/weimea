@@ -8,8 +8,7 @@
 randomize(x, ...)
 
 \method{randomize}{cwm}(x, permutations = 1, FUN = function(y) y,
-  progress.bar = F, parallel = NULL, library.par = NULL,
-  export.cl = NULL, ...)
+  parallel = NULL, library.par = NULL, export.cl = NULL, ...)
 }
 \arguments{
 \item{x}{object of the class \code{cwm}}
@@ -19,8 +18,6 @@ randomize(x, ...)
 \item{permutations}{number of randomizations}
 
 \item{FUN}{function to be applied on the column of calculated weighted mean values}
-
-\item{progress.bar}{logical value, should be the progress bar indicating the progress of the calculation launched?}
 
 \item{parallel}{integer or NULL (default). If integer, calculation will be conducted in parallel on number of cores given by \code{parallel}}
 

@@ -45,7 +45,7 @@ arma::vec wstandCpp(arma::vec x, arma::vec w) {
   return (wstand_x);
 }
 
-// [[Rcpp::export()]]
+//[[Rcpp::export()]]
 double wmeanCpp (arma::vec x, arma::vec w) {
   w = w/sum (w);
   arma::mat W = diagmat (w);
@@ -237,7 +237,7 @@ arma::mat stand_tot (arma::mat L) {
   return (L);
 }
 
-// [[Rcpp::export()]]
+//[[Rcpp::export()]]
 int count_if(LogicalVector x) {
   int counter = 0;
   for(int i = 0; i < x.size(); i++) {
@@ -248,7 +248,7 @@ int count_if(LogicalVector x) {
   return counter;
 }
 
-// [[Rcpp::export]]
+//[[Rcpp::export()]]
 arma::mat submat_nonzero(arma::mat X, arma::vec T) {
   arma::mat Xmat(X.begin(), X.n_rows, X.n_cols, false);
   arma::colvec tIdx(T.begin(), T.size(), false); 
@@ -413,7 +413,7 @@ List test_fourthCpp (arma::vec e, arma::mat L, arma::vec t, CharacterVector test
 
 
 // Extended version of fastLm from RcppArmadillo, calculates also F-value and r2
-// [[Rcpp::export]]
+//[[Rcpp::export()]]
 List fastLm_cwm (const arma::mat& X, const arma::colvec& y, bool stderr_incl) {
   int n = X.n_rows, k = X.n_cols;
   

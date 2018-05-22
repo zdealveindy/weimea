@@ -29,7 +29,6 @@
 #' @author David Zeleny (zeleny.david@@gmail.com)
 #' @useDynLib weimea
 #' @importFrom Rcpp evalCpp
-#' @import RcppArmadillo
 #' @export
 cwm <- function (com, traits, wstand = FALSE)
 {
