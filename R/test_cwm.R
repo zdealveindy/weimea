@@ -26,7 +26,7 @@
 #' CWM <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
 #' re <- test_cwm (cwm = CWM, env = vltava$env[,c('pH', 'COVERE32')])
 #' @details
-#' Currently implemented statistical methods are (\code{'cor', 'fourthcorner', 'lm' and 'aov'}).
+#' Currently implemented statistical methods: \code{'cor'}. Plan to implement also: \code{'lm'} and \code{'aov'}. For fourth corner, please use \code{\link{test_fourth}}.
 #'
 #' Argument \code{env} can be vector or matrix with one column. Only in the case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 #' 
@@ -35,20 +35,14 @@
 #' Both \code{method = 'lm'} and \code{'slope'} are based on linear regression and calculated by function \code{\link{lm}}, but differ by test statistic: while 'lm' is using F value and is testing the strength of the regression (measured by r2), 'slope' is using the slope of the regression line (b). This statistic is added here for comparison with the fourth corner method.
 #' 
 #' Specific issue related to weighted mean is the case of missing species attributes. In current implementation, species with missing species attributes are removed from sample x species matrix prior to permutation of species attributes among species. 
-#' @return  Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} and \code{summary} methods), which contains the following items:
+#' @return  Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} and \code{summary} methods), which contains the following components:
 #' \itemize{
-#'  \item \code{real.summaries} summary of the method
-#'  \item \code{coefs} model coefficients
-#'  \item \code{stat} test statistic
-#'  \item \code{orig.P} P-values from the original (parametric) test
-#'  \item \code{perm.P} P-values from the standard (rowbased) permutation test (permuted are the whole rows of matrix cwm)
-#'  \item \code{modif.P} P-values from the modified (colbased) permutation test (permuted are species attributes in object cwm)
-#'  \item \code{seq.P} P-values from max test (\code{max (perm.P, modif.P)})
-#'  \item \code{perm} number of permutations
-#'  \item \code{method} method of calculation
-#'  \item \code{dependence} dependence (in case of \code{method = 'lm'})
-#'  }
-#' @seealso \code{\link{cwm}}
+#'  \item \code{call} Call to the function.
+#'  \item \code{out} Matrix with analysis results (coefficients, statistics, P-values).
+#'  \item \code{miss} Matrix with counts of missing values in \code{env}, \code{cwm} and \code{traits}.
+#'  \item \code{param} List with the setting of the function parameters (arguments).
+#' }
+#' @seealso \code{\link{cwm}}, \code{\link{snc}}
 
 #' @export
 test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE, wreg = NULL, dependence = "cwm ~ env", perm = 499, test = "max", parallel = NULL, p.adjust.method = 'holm', adjustP = FALSE)
@@ -66,7 +60,7 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
   
   if (!is.cwm (cwm) & ("modified" %in% test || "colbased" %in% test || "max" %in% test || "all" %in% test)) stop ("Object cwm must be of 'cwm' class")
   env <- as.data.frame (env)
-  if ((method == 'lm') & ('max' %in% test || 'colbased' %in% test || 'modified' %in% test) & (dependence == 'cwm ~ env') & (ncol (env) > 1)) stop ("Column-based (modified) and max permutation test is not available for multiple linear regression with more than one predictor variable (env)")  # This can be fixed and removed
+  # if ((method == 'lm') & ('max' %in% test || 'colbased' %in% test || 'modified' %in% test) & (dependence == 'cwm ~ env') & (ncol (env) > 1)) stop ("Column-based (modified) and max permutation test is not available for multiple linear regression with more than one predictor variable (env)")  # This can be fixed and removed
   com <- attr (cwm, 'com')
   traits <- attr (cwm, 'traits')
 
@@ -88,7 +82,30 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
     names (res) <- apply (vars.names, 1, FUN = function (x) paste (x[1], x[2], sep = ' / '))
    }
 
-      
+# linear regression - function 'lm'
+  # if (method == 'lm')
+  # {
+  #   vars.names <- if (dependence == 'cwm ~ env') colnames (traits) else colnames (env)
+  #   
+  #   if (is.null (parallel)) {
+  #     if (dependence == 'cwm ~ env') res <- lapply (vars.names, FUN = function (var12) weimea:::test_cwm_lm (e = as.matrix (env), L = as.matrix (com), t = as.matrix (traits[, var12, drop = FALSE]), test = test, dependence = dependence, perm = perm, wstand = wstand)) else
+  #       res <- lapply (vars.names, FUN = function (var12) test_cwm_lm (e = as.matrix (env[, var12, drop = FALSE]), L = as.matrix (com), t = as.matrix (traits), test = test, dependence = dependence, perm = perm, wstand = wstand))
+  #   }
+  #   else 
+  #   {
+  #     cl <- parallel::makeCluster (parallel)
+  #     parallel::clusterExport (cl, varlist = c('vars.names', 'com', 'traits', 'env', 'test', 'perm'), envir = environment ())
+  #     parallel::clusterEvalQ (cl, eval (call ('library', 'weimea')))
+  #     if (dependence == 'cwm ~ env') res <- parallel::parApply (cl, vars.names, 1, FUN = function (var12) test_cwm_lm (e = as.matrix (env), L = as.matrix (com), t = as.matrix (traits[, var12, drop = FALSE]), test = test, dependence = dependence, perm = perm, wstand = wstand)) else
+  #       res <- parallel::parApply (cl, vars.names, 1, FUN = function (var12) test_cwm_lm (e = as.matrix (env[, var12, drop = FALSE]), L = as.matrix (com), t = as.matrix (traits), test = test, dependence = dependence, perm = perm, wstand = wstand))
+  #   }
+  #   names (res) <- vars.names
+  #   lapply (res, FUN = function (RES) {
+  #     R.temp <- as.list (as.vector (cbind (RES$coef, RES$stderr)))
+  #     THIS NEEDS TO FINISH
+  #   })
+  # }
+  
 #     # linear regression - function fastLM_cwm
 #   if (method == 'lm')
 #   {
@@ -120,9 +137,9 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
   res.miss <- lapply (res, FUN = function (x) x[(length (x)-2):length (x)])
   res.out <- do.call (rbind.data.frame, res.coef)
   test.choice <- c('parametric', 'standard', 'rowbased', 'modified', 'colbased', 'max')
-  test.P.xxx <- c ('P.par', 'P.row', 'P.row', 'P.col', 'P.col', 'P.max')
+  test.P.xxx <- c ('P_par', 'P_row', 'P_row', 'P_col', 'P_col', 'P_max')
   P.test <- test.P.xxx[test.choice %in% test]
-  res.coefs <- res.out [,!substr (colnames (res.out), 1, 2) %in% 'P.']
+  res.coefs <- res.out [,!substr (colnames (res.out), 1, 2) %in% 'P_']
   res.out <- cbind (res.coefs, res.out[, P.test, drop = F])
   if (adjustP && test != 'none') {
     res.out <- cbind (res.out, p.adjust (res.out[, ncol (res.out)], method = p.adjust.method))
@@ -136,7 +153,7 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
 
 #' @rdname test_cwm
 #' @export
-print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.summary = TRUE, adjustP = FALSE, ...)
+print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.summary = FALSE, adjustP = FALSE, ...)
 {
   cs.ind <- switch (x$param$method, 
                     'cor' = 1,
@@ -144,9 +161,12 @@ print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.
   tst.ind <- switch (x$param$method,
                      'cor' = 2,
                      'fourthcorner' = 0)
+  df.ind <- switch (x$param$method,
+                    'cor' = 3:4,
+                    'fourthcorner' = 3:4)
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
       "\n\n", sep = "")
-  printCoefmat2 (x$out, digits = digits, cs.ind = cs.ind, tst.ind = tst.ind,  ...)
+  printCoefmat2 (x$out, digits = digits, cs.ind = cs.ind, tst.ind = tst.ind, df.ind = df.ind, ...)
   if (missing.summary) printMissum (x$miss)
   
 }
@@ -250,13 +270,13 @@ join_mat <- function (mat1, mat2, incl1names = TRUE, incl2names = TRUE) {
 }
 
 printCoefmat2 <- function (x, digits = max(3L, getOption("digits") - 2L), signif.stars = getOption("show.signif.stars"), 
-                           signif.legend = signif.stars, dig.tst = max(1L, min(5L, digits - 1L)), cs.ind = NULL, tst.ind = NULL, zap.ind = integer(), eps.Pvalue = .Machine$double.eps, na.print = "NA", ...) 
+                           signif.legend = signif.stars, dig.tst = max(1L, min(5L, digits - 1L)), cs.ind = NULL, tst.ind = NULL, df.ind = NULL, zap.ind = integer(), eps.Pvalue = .Machine$double.eps, na.print = "NA", ...) 
 {
   d <- dim(x)
   if (is.null(d) || length(d) != 2L) stop("'x' must be coefficient matrix/data frame")
   nc <- d[2L]
   xm <- data.matrix(x)
-  Cf <- array("", dim = c(d[1], sum (cs.ind > 0) + sum (tst.ind > 0)), dimnames = list (dimnames(xm)[[1]], dimnames (xm)[[2]][1:(sum (cs.ind > 0) + sum (tst.ind > 0))]))
+  Cf <- array("", dim = c(d[1], sum (cs.ind > 0) + sum (tst.ind > 0) + sum (df.ind > 0)), dimnames = list (dimnames(xm)[[1]], dimnames (xm)[[2]][1:(sum (cs.ind > 0) + sum (tst.ind > 0) + sum (df.ind > 0))]))
   ok <- !(ina <- is.na(xm))
   for (i in zap.ind) xm[, i] <- zapsmall(xm[, i], digits)
   if (length(cs.ind)) {
@@ -274,16 +294,18 @@ printCoefmat2 <- function (x, digits = max(3L, getOption("digits") - 2L), signif
     Cf[, tst.ind] <- format(round(xm[, tst.ind], digits = dig.tst), 
                             digits = digits)
   ok[, tst.ind] <- FALSE
+  if (length(df.ind))
+    Cf[, df.ind] <- format (xm[, df.ind])
+  
   dec <- getOption("OutDec")
   if (dec != ".") 
     x1 <- chartr(dec, ".", x1)
   if (any(ina)) 
     Cf[ina] <- na.print
-  P.values.log <- substr (colnames (xm), 1, 2) == 'P.'
+  P.values.log <- substr (colnames (xm), 1, 2) == 'P_'
   if (any (P.values.log)) P.values <- colnames (xm) [P.values.log] else P.values <- NULL
   if (!is.null (P.values))
    {
-    #P.values <- which (substr (colnames (xm), 1, 2) == 'P.')
     if (!is.logical(signif.stars) || is.na(signif.stars)) {
       warning("option \"show.signif.stars\" is invalid: assuming TRUE")
       signif.stars <- TRUE

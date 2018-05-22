@@ -11,7 +11,7 @@ test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
   adjustP = FALSE)
 
 \method{print}{testFOURTH}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = TRUE, ...)
+  missing.summary = FALSE, ...)
 
 \method{coef}{testFOURTH}(object, ...)
 }

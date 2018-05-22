@@ -6,7 +6,7 @@
 using namespace Rcpp;
 using namespace arma;
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::vec colSumsCpp(const arma::mat & X){
   int nCols = X.n_cols;
   arma::vec out(nCols);
@@ -16,7 +16,7 @@ arma::vec colSumsCpp(const arma::mat & X){
   return(out);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::vec rowSumsCpp(const arma::mat & X){
   int nRows = X.n_rows;
   arma::vec out(nRows);
@@ -26,7 +26,7 @@ arma::vec rowSumsCpp(const arma::mat & X){
   return(out);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::vec standCpp (arma::vec x) {
   double mean_x = 1.0/x.n_elem * sum (x);
   double s2_x = 1.0/x.n_elem * sum (square (x - mean_x));
@@ -34,7 +34,7 @@ arma::vec standCpp (arma::vec x) {
   return (stand_x);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::vec wstandCpp(arma::vec x, arma::vec w) {
   w = w/sum (w);
   arma::mat W = diagmat (w);
@@ -45,7 +45,7 @@ arma::vec wstandCpp(arma::vec x, arma::vec w) {
   return (wstand_x);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 double wmeanCpp (arma::vec x, arma::vec w) {
   w = w/sum (w);
   arma::mat W = diagmat (w);
@@ -54,7 +54,7 @@ double wmeanCpp (arma::vec x, arma::vec w) {
   return (wmean_x);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 double wsdCpp (arma::vec x, arma::vec w){
   w = w/sum (w);
   arma::mat W = diagmat (w);
@@ -65,7 +65,7 @@ double wsdCpp (arma::vec x, arma::vec w){
   return (wsd_x);
 }  
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::mat wcenterCpp (arma::mat x, arma::vec w){
   //w = w/sum (w);
   int nr = x.n_rows, nc = x.n_cols;  
@@ -80,7 +80,7 @@ arma::mat wcenterCpp (arma::mat x, arma::vec w){
   return (x_wc);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 double corCpp (arma::vec x, arma::vec y) {
   arma::vec x_stand = standCpp (x);
   arma::vec y_stand = standCpp (y);
@@ -88,7 +88,7 @@ double corCpp (arma::vec x, arma::vec y) {
   return (r);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 double wcorCpp (arma::vec x, arma::vec y, arma::vec w) {
   w = w / sum (w);
   arma::mat W = diagmat (w);
@@ -98,7 +98,7 @@ double wcorCpp (arma::vec x, arma::vec y, arma::vec w) {
   return (r_w);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::mat cwmCpp (arma::mat L, arma::mat t, bool wstand) {
   arma::mat P = L/accu (L);
   arma::mat c(L.n_rows, t.n_cols);
@@ -146,7 +146,7 @@ arma::mat cwmCpp (arma::mat L, arma::mat t, bool wstand) {
   return (c);
 } 
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::mat sncCpp (arma::mat L, arma::mat e, bool wstand) {
   arma::mat P = L/accu (L);
   arma::mat u(L.n_cols, e.n_cols);
@@ -195,7 +195,7 @@ arma::mat sncCpp (arma::mat L, arma::mat e, bool wstand) {
   return (u);
 } 
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::vec sncCpp2 (arma::mat L, arma::vec e) {
   arma::mat P = L/accu (L);
   arma::vec w_s = colSumsCpp (P);
@@ -204,7 +204,7 @@ arma::vec sncCpp2 (arma::mat L, arma::vec e) {
   return (u);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 double ca_eig1_sqrt (arma::mat Y){
   arma::vec fi_ = rowSumsCpp (Y); 
   arma::vec f_j = colSumsCpp (Y);
@@ -218,7 +218,7 @@ double ca_eig1_sqrt (arma::mat Y){
   return (eig1);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 double fourth (arma::vec e, arma::mat L, arma::vec t) {
   arma::mat P = L/accu (L);
   arma::vec w_n = rowSumsCpp (P);
@@ -229,7 +229,7 @@ double fourth (arma::vec e, arma::mat L, arma::vec t) {
   return (r_f);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::mat stand_tot (arma::mat L) {
   for (int i = 0; (unsigned)i < L.n_rows; i++){
     L.row(i) /= sum (L.row (i));
@@ -237,7 +237,7 @@ arma::mat stand_tot (arma::mat L) {
   return (L);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 int count_if(LogicalVector x) {
   int counter = 0;
   for(int i = 0; i < x.size(); i++) {
@@ -248,7 +248,7 @@ int count_if(LogicalVector x) {
   return counter;
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::mat submat_nonzero(arma::mat X, arma::vec T) {
   arma::mat Xmat(X.begin(), X.n_rows, X.n_cols, false);
   arma::colvec tIdx(T.begin(), T.size(), false); 
@@ -257,7 +257,7 @@ arma::mat submat_nonzero(arma::mat X, arma::vec T) {
 }
 
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 bool is_in (CharacterVector x, CharacterVector table){
   bool is_in_temp = FALSE;
   for (int i = 0; i < x.size (); i++){
@@ -268,7 +268,7 @@ bool is_in (CharacterVector x, CharacterVector table){
   return is_in_temp;
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 arma::uvec complete_cases (arma::mat X){
   int nrows = X.n_rows;
   arma::uvec keep(nrows, fill::zeros);
@@ -277,7 +277,7 @@ arma::uvec complete_cases (arma::mat X){
     return (keep);
 }
 
-//[[Rcpp::export()]] 
+//[[Rcpp::export]] 
 List rm_missing_eLt (arma::mat e, arma::mat L, arma::mat t) {
   arma::uvec e_complcases = complete_cases (e);
   arma::uvec t_complcases = complete_cases (t);
@@ -289,13 +289,15 @@ List rm_missing_eLt (arma::mat e, arma::mat L, arma::mat t) {
       _["e"] = e_temp,
       _["L"] = L_temp,
       _["t"] = t_temp,
+      _["n_sit"] = L_temp.n_rows,
+      _["n_spe"] = L_temp.n_cols,
       _["e_missing"] = find (e_complcases == 0) + 1,
       _["t_missing"] = find (t_complcases == 0) + 1,
       _["c_missing"] = find (c_hasspecies == 0) + 1
   );
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 List test_cwm_cor (arma::vec e, arma::mat L, arma::vec t, CharacterVector test, int perm, bool wcor, bool wstand) {
   
   List eLt = rm_missing_eLt (e, L, t);  // removing rows and columns in L with missing e and/or t, resp; removing rows with not enough species to calculate
@@ -352,17 +354,19 @@ List test_cwm_cor (arma::vec e, arma::mat L, arma::vec t, CharacterVector test, 
   return List::create (
     _["r"] = r_obs,
     _["t"] = t_obs,
-    _["P.par"] = P_par,
-    _["P.row"] = P_row,
-    _["P.col"] = P_col,
-    _["P.max"] = P_max,
+    _["n_sit"] = eLt["n_sit"],
+    _["n_spe"] = eLt["n_spe"],
+    _["P_par"] = P_par,
+    _["P_row"] = P_row,
+    _["P_col"] = P_col,
+    _["P_max"] = P_max,
     _["e_missing"] = eLt["e_missing"],
     _["t_missing"] = eLt["t_missing"],
     _["c_missing"] = eLt["c_missing"]
   );
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 List test_fourthCpp (arma::vec e, arma::mat L, arma::vec t, CharacterVector test, int perm) {
   
   List eLt = rm_missing_eLt (e, L, t);  // removing rows and columns in L with missing e and/or t, resp; removing rows with not enough species to calculate
@@ -402,9 +406,11 @@ List test_fourthCpp (arma::vec e, arma::mat L, arma::vec t, CharacterVector test
   return List::create (
       _["r_fc"] = r_f_obs,
       _["r_ch"] = r_fc_obs,
-      _["P.row"] = P_row,
-      _["P.col"] = P_col,
-      _["P.max"] = P_max,
+      _["n_sit"] = eLt["n_sit"],
+      _["n_spe"] = eLt["n_spe"],
+      _["P_row"] = P_row,
+      _["P_col"] = P_col,
+      _["P_max"] = P_max,
       _["e_missing"] = eLt["e_missing"],
       _["t_missing"] = eLt["t_missing"],
       _["c_missing"] = eLt["c_missing"]
@@ -413,7 +419,7 @@ List test_fourthCpp (arma::vec e, arma::mat L, arma::vec t, CharacterVector test
 
 
 // Extended version of fastLm from RcppArmadillo, calculates also F-value and r2
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 List fastLm_cwm (const arma::mat& X, const arma::colvec& y, bool stderr_incl) {
   int n = X.n_rows, k = X.n_cols;
   
@@ -445,7 +451,7 @@ List fastLm_cwm (const arma::mat& X, const arma::colvec& y, bool stderr_incl) {
 }
 
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, const char* dependence, int perm, bool wstand) {
   
   List eLt = rm_missing_eLt (e, L, t);  // removing rows and columns in L with missing e and/or t, resp; removing rows with not enough species to calculate
@@ -520,15 +526,17 @@ List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, c
   return List::create (
       _["coef"] = lm_obs["coefficients"],
       _["stderr"] = lm_obs["stderr"],                   
-      _["rsq"] = rsq_obs,
-      _["rsq.adj"] = rsq_adj,
-      _["rsq.adj.sta"] = rsq_adj_sta,
-      _["rsq.adj.mod"] = rsq_adj_mod,
-      _["F.obs"] = F_obs,
-      _["P.par"] = P_par,
-      _["P.row"] = P_row,
-      _["P.col"] = P_col,
-      _["P.max"] = P_max,
+      _["r2"] = rsq_obs,
+      _["r2adj"] = rsq_adj,
+      _["r2adj_sta"] = rsq_adj_sta,
+      _["r2adj_mod"] = rsq_adj_mod,
+      _["n_sit"] = eLt["n_sit"],
+      _["n_spe"] = eLt["n_spe"],
+      _["F"] = F_obs,
+      _["P_par"] = P_par,
+      _["P_row"] = P_row,
+      _["P_col"] = P_col,
+      _["P_max"] = P_max,
       _["e_missing"] = eLt["e_missing"],
       _["t_missing"] = eLt["t_missing"],
       _["c_missing"] = eLt["c_missing"]
@@ -536,7 +544,7 @@ List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, c
 );
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 List lm_vectorfitCpp (arma::mat X, arma::mat P){
   arma::mat coef = arma::solve (X, P);
   arma::mat P_fit = X * coef;
@@ -548,7 +556,7 @@ List lm_vectorfitCpp (arma::mat X, arma::mat P){
       _["r"] = r);
 }
 
-//[[Rcpp::export()]]
+//[[Rcpp::export]]
 List vectorfit_cwmCpp (arma::mat X, arma::mat L, arma::mat t, bool wstand, arma::colvec w, int perm, CharacterVector test){
   arma::mat C = cwmCpp (L, t, wstand);
   arma::mat Xw = wcenterCpp (X, w);

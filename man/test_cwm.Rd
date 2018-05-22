@@ -11,7 +11,7 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
   parallel = NULL, p.adjust.method = "holm", adjustP = FALSE)
 
 \method{print}{testCWM}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = TRUE, adjustP = FALSE, ...)
+  missing.summary = FALSE, adjustP = FALSE, ...)
 
 \method{coef}{testCWM}(object, ...)
 }
@@ -49,25 +49,19 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
 \item{...}{Other arguments for \code{print}, \code{summary} or \code{coef} functions (not implemented yet).}
 }
 \value{
-Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} and \code{summary} methods), which contains the following items:
+Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} and \code{summary} methods), which contains the following components:
 \itemize{
- \item \code{real.summaries} summary of the method
- \item \code{coefs} model coefficients
- \item \code{stat} test statistic
- \item \code{orig.P} P-values from the original (parametric) test
- \item \code{perm.P} P-values from the standard (rowbased) permutation test (permuted are the whole rows of matrix cwm)
- \item \code{modif.P} P-values from the modified (colbased) permutation test (permuted are species attributes in object cwm)
- \item \code{seq.P} P-values from max test (\code{max (perm.P, modif.P)})
- \item \code{perm} number of permutations
- \item \code{method} method of calculation
- \item \code{dependence} dependence (in case of \code{method = 'lm'})
- }
+ \item \code{call} Call to the function.
+ \item \code{out} Matrix with analysis results (coefficients, statistics, P-values).
+ \item \code{miss} Matrix with counts of missing values in \code{env}, \code{cwm} and \code{traits}.
+ \item \code{param} List with the setting of the function parameters (arguments).
+}
 }
 \description{
 Function calculating relationship between weighted-mean of species attributes and sample attributes and performing standard (row based), modified (column based), or max test of significance.
 }
 \details{
-Currently implemented statistical methods are (\code{'cor', 'fourthcorner', 'lm' and 'aov'}).
+Currently implemented statistical methods: \code{'cor'}. Plan to implement also: \code{'lm'} and \code{'aov'}. For fourth corner, please use \code{\link{test_fourth}}.
 
 Argument \code{env} can be vector or matrix with one column. Only in the case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 
@@ -83,5 +77,5 @@ CWM <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
 re <- test_cwm (cwm = CWM, env = vltava$env[,c('pH', 'COVERE32')])
 }
 \seealso{
-\code{\link{cwm}}
+\code{\link{cwm}}, \code{\link{snc}}
 }

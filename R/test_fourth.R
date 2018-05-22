@@ -73,13 +73,14 @@ test_fourth <- function (env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
 
 #' @rdname test_fourth
 #' @export
-print.testFOURTH <- function (x, digits = max(3, getOption("digits") - 3), missing.summary = TRUE, ...)
+print.testFOURTH <- function (x, digits = max(3, getOption("digits") - 3), missing.summary = FALSE, ...)
 {
-  cs.ind <- 1:2
+  cs.ind <- c(1, 2)
   tst.ind <- 0
+  df.ind <- c(3, 4)
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
       "\n\n", sep = "")
-  printCoefmat2 (x$out, digits = digits, cs.ind = cs.ind, tst.ind = tst.ind, ...)
+  printCoefmat2 (x$out, digits = digits, cs.ind = cs.ind, tst.ind = tst.ind, df.ind = df.ind, ...)
   if (missing.summary) printMissum (x$miss)
   
 }
