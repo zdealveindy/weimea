@@ -1,7 +1,7 @@
 Package: weimea
 Type: Package
 Title: Weighted Mean Analysis
-Version: 0.1.3
+Version: 0.1.4
 Date: 2018-05-23
 Authors@R: person("Zeleny", "David", email = "zeleny.david@gmail.com", role = c("aut", "cre"))
 Description: Analysing and testing the relationship community-

@@ -4,6 +4,7 @@
 \alias{test_cwm}
 \alias{print.testCWM}
 \alias{coef.testCWM}
+\alias{plot.testCWM}
 \title{Testing the relationship between weighted-mean of species attributes with sample attributes}
 \usage{
 test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
@@ -14,6 +15,10 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
   missing.summary = FALSE, adjustP = FALSE, ...)
 
 \method{coef}{testCWM}(object, ...)
+
+\method{plot}{testCWM}(x, alpha = 0.05, line = 2.5, cex.lab = 1.5,
+  par.mar = c(4, 4, 0.5, 0.5), box.col = c("blue", "red"), box.lwd = 2,
+  ...)
 }
 \arguments{
 \item{cwm}{An object of the class \code{cwm}.}
@@ -46,7 +51,9 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
 
 \item{missing.summary}{Logical; should be the summary of values missing in \code{env}, \code{cwm} and \code{traits} be printed along to the result of \code{test_cwm} analysis? Default is \code{TRUE}.}
 
-\item{...}{Other arguments for \code{print}, \code{summary} or \code{coef} functions (not implemented yet).}
+\item{...}{Other arguments for \code{print}, \code{summary}, \code{coef} or \code{plot} functions (some not implemented yet).}
+
+\item{alpha, line, cex.lab, par.mar, box.col, box.lwd}{Graphical parameters for \code{plot} function.}
 }
 \value{
 Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} and \code{summary} methods), which contains the following components:
@@ -75,6 +82,8 @@ Specific issue related to weighted mean is the case of missing species attribute
 data (vltava)
 CWM <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
 re <- test_cwm (cwm = CWM, env = vltava$env[,c('pH', 'COVERE32')])
+re
+plot (re)
 }
 \seealso{
 \code{\link{cwm}}, \code{\link{snc}}
