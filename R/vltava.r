@@ -43,13 +43,15 @@
 #'  \code{vltava} is a structured list with these items:
 #'  \itemize{
 #'  \item \code{spe} Compositional matrix of all species (sample x species, percentage cover scale)
-#'  \item \code{ell} Species Ellenberg indicator values (species x Ellenberg values for light, temperature, continentality, moisture, reaction and nutrients, compiled from Ellenberg et al. 1991).
+#'  \item \code{eiv} Species Ellenberg indicator values (species x Ellenberg values for \code{light}, \code{temp}erature, \code{cont}inentality, \code{moist}ure, \code{react}ion and \code{nutr}ients, compiled from Ellenberg et al. 1991).
+#'  \item \code{civ} Species Czech indicator values (specise x indicator values for \code{light}, \code{temp}erature, \code{moist}ure, \code{react}ion, \code{nutr}ients and \code{salin}ity, compiled from Chytry et al. 2018). For each value (except salinity) two variables are available: with removed indicator values for generalist species (e.g. \code{light}) and with indicator values for all species including generalist (e.g. \code{light_all}). 
 #'  \item \code{env} Environmental variables (see Details).
 #'  \item \code{spnames} Data frame with two columns: \code{Full.species.name} - original species names, and \code{Layer} - vegetation layer, in which the species occur (1 - herb layer, 23 - shrub or/and tree layer)
 #'  \item \code{herbs} list with the following items, related only to the subset of herb species:
 #'    \itemize{
 #'    \item \code{spe} Compositional matrix of herb species (sample x species, percentage cover scale)
-#'    \item \code{ell} Species Ellenberg indicator values for herb species (species x Ellenberg values for light, temperature, continentality, moisture, reaction and nutrients)
+#'   \item \code{eiv} Species Ellenberg indicator values (species x Ellenberg values for \code{light}, \code{temp}erature, \code{cont}inentality, \code{moist}ure, \code{react}ion and \code{nutr}ients, compiled from Ellenberg et al. 1991).
+#'    \item \code{civ} Species Czech indicator values (specise x indicator values for \code{light}, \code{temp}erature, \code{moist}ure, \code{react}ion, \code{nutr}ients and \code{salin}ity, compiled from Chytry et al. 2018). For each value (except salinity) two variables are available: with removed indicator values for generalist species (e.g. \code{light}) and with indicator values for all species including generalist (e.g. \code{light_all}). 
 #'    \item \code{traits} Species functional traits for plant height (compiled from Czech flora, Kubat et al. 2002), specific leaf area (SLA) and seed weight (compiled from LEDA database, Kleyer et al. 2008).
 #'    \item \code{spnames} Data frame with two columns: \code{Full.species.name} - original species names, and \code{Layer} - vegetation layer, in which the species occur (1 - herb layer)
 #'  }
@@ -67,6 +69,8 @@
 #' @references
 #' 
 #' Ellenberg H., Weber H.E., Dull R., Wirth V., Werner W. & Paulissen D. 1991. Zeigerwerte von Pflanzen in Mitteleuropa. Scripta Geobotanica 18: 1-248.
+#' 
+#' Chytry M., Tichy L., Drevojan P., Sadlo J. & Zeleny D. (2018): Ellenberg-type indicator values for the Czech flora. Preslia 90: 83–103.
 #' 
 #' Kleyer M., Bekker R.M., Knevel I.C., Bakker J.P., Tompson K., Sonnenshein M. et al. (2008) The LEDA Traitbase: a database of life-history traits of Northwest European flora. Journal of Ecology, 96, 1266-1274.
 #' 

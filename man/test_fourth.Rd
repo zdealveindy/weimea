@@ -4,6 +4,7 @@
 \alias{test_fourth}
 \alias{print.testFOURTH}
 \alias{coef.testFOURTH}
+\alias{plot.testFOURTH}
 \title{Testing the relationship species attributes and sample attributes by fourth corner method}
 \usage{
 test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
@@ -14,6 +15,10 @@ test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
   missing.summary = FALSE, ...)
 
 \method{coef}{testFOURTH}(object, ...)
+
+\method{plot}{testFOURTH}(x, alpha = 0.05, line = NA, cex.lab = 1.5,
+  par.mar = c(0.5, 0.5, 0.5, 0.5), box.col = c("blue", "red"),
+  box.lwd = 2, ...)
 }
 \arguments{
 \item{env}{Vector, matrix or data frame with sample attributes (environemntal variables).}
@@ -41,6 +46,8 @@ test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
 \item{missing.summary}{Logical; should be the summary of values missing in \code{env}, \code{cwm} and \code{traits} be printed along to the result of \code{test_cwm} analysis? Default is \code{TRUE}.}
 
 \item{...}{Other arguments for \code{print}, \code{summary} or \code{coef} functions (not implemented yet).}
+
+\item{alpha, line, cex.lab, par.mar, box.col, box.lwd}{Graphical parameters for \code{plot} function.}
 }
 \value{
 Function \code{test_fourth} returns the list of the class \code{"testFOURTH"} (with \code{print} and \code{summary} methods), which contains the following items:
