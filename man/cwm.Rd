@@ -77,7 +77,7 @@ Function \code{range_cwm} changes the range of species attributes and recalculat
 \examples{
 # Calculation of weighted mean of species Ellenberg indicator values using dataset Vltava
 data (vltava)
-mean.eiv <- cwm (com = vltava$spe, traits = vltava$ell)
+mean.eiv <- cwm (com = vltava$spe, traits = vltava$eiv)
 
 summary (mean.eiv)
 

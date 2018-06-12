@@ -1,8 +1,8 @@
 Package: weimea
 Type: Package
 Title: Weighted Mean Analysis
-Version: 0.1.4
-Date: 2018-05-23
+Version: 0.1.9
+Date: 2018-06-12
 Authors@R: person("Zeleny", "David", email = "zeleny.david@gmail.com", role = c("aut", "cre"))
 Description: Analysing and testing the relationship community-
     weighted mean (wei mea) of species attributes (traits, Ellenberg-type indicator values) and

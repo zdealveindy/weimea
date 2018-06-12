@@ -41,7 +41,7 @@ arma::vec wstandCpp(arma::vec x, arma::vec w) {
   arma::colvec I = ones<colvec>(x.n_elem, 1);
   double wmean_x = as_scalar (I.t() * W * x);  // the operation returns matrix, eventhought it should be a double
   double ws2_x = as_scalar ((x-wmean_x*I).t() * W * (x - wmean_x * I));
-  arma::vec wstand_x = (x - wmean_x)/sqrt (ws2_x);
+  arma::vec wstand_x = (x - wmean_x)/sqrt (ws2_x); 
   return (wstand_x);
 }
 
@@ -307,20 +307,18 @@ List test_cwm_cor (arma::vec e, arma::mat L, arma::vec t, CharacterVector test, 
   arma::mat eLt_t = eLt["t"];
   arma::vec t_temp = arma::vectorise (eLt_t);
   arma::vec w_n;
-  if (wcor || wstand) w_n = rowSumsCpp (L_temp);  // rowsums as weights will be used in case wcor == TRUE (w in cor) or wstand == TRUE (w for t)
   arma::vec w_s;
+  if (wcor || wstand) w_n = rowSumsCpp (L_temp);  // rowsums as weights will be used in case wcor == TRUE (w in cor) or wstand == TRUE (w for t)
   if (wstand) w_s = colSumsCpp (L_temp);  // colsums as weights will be used in case wstand == TRUE (w for e)
   arma::vec cwm = cwmCpp (L_temp, t_temp, wstand);
   double no_samples = L_temp.n_rows;
   double r_obs;
-  arma::vec e_temp_w;
-  if (wstand) e_temp_w = wstandCpp (e_temp, w_n); else e_temp_w = e_temp;
-  if (wcor) r_obs = wcorCpp (cwm, e_temp_w, w_n); else r_obs = corCpp (cwm, e_temp_w);
+  if (wstand) e_temp = wstandCpp (e_temp, w_n);
+  if (wcor) r_obs = wcorCpp (cwm, e_temp, w_n); else r_obs = corCpp (cwm, e_temp);
   double t_obs = r_obs*sqrt ((e_temp.size () - 2)/(1 - pow (r_obs, 2.0)));  // calculates t-value according to Student's t formula
   double P_par = R::pt (t_obs, no_samples-2, TRUE, FALSE);
   P_par = 2*(min (NumericVector::create (P_par, 1-P_par)));
   double P_row = NA_REAL, P_col = NA_REAL, P_max = NA_REAL;
-  arma::mat e_rand;
 
   if (is_in (CharacterVector::create ("standard", "rowbased", "max"), test)){
     double r_exp_sta;
@@ -340,7 +338,7 @@ List test_cwm_cor (arma::vec e, arma::mat L, arma::vec t, CharacterVector test, 
     arma::vec t_exp_mod (perm+1);
     for (int nperm = 0; nperm < perm; nperm++){
       arma::vec cwm_rand = cwmCpp (L_temp, shuffle (t_temp), wstand);
-      if (wcor) {r_exp_mod = wcorCpp (cwm_rand, e_temp_w, w_n);} else {r_exp_mod = corCpp (cwm_rand, e_temp_w);}
+      if (wcor) {r_exp_mod = wcorCpp (cwm_rand, e_temp, w_n);} else {r_exp_mod = corCpp (cwm_rand, e_temp);}
       t_exp_mod (nperm) = r_exp_mod*sqrt ((e_temp.size () - 2)/(1 - pow (r_exp_mod, 2.0)));
     }
     t_exp_mod (perm) = t_obs; //observed values is put on the last place of the vector
@@ -474,7 +472,7 @@ List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, c
 
   double rsq_obs = lm_obs["R.squared"];
   double rsq_adj = 1.0 - ((n - 1.0)/(n - p - 1.0))*(1.0 - rsq_obs);  // Calculate rsq_adj using Ezekiel's formula
-  double rsq_adj_sta = NA_REAL, rsq_adj_mod = NA_REAL;
+  double rsq_adj_mod = NA_REAL; //rsq_adj_sta = NA_REAL
   double F_obs = lm_obs["F.value"];
   double P_par = R::pf (F_obs, lm_obs["df.model"], lm_obs["df.residual"], FALSE, FALSE);
   double P_row = NA_REAL, P_col = NA_REAL, P_max = NA_REAL;
@@ -496,7 +494,7 @@ List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, c
     }
     F_exp_sta (perm) = F_obs; //observed values is put on the last place of the vector
     P_row = sum (abs (F_exp_sta) >= std::abs (F_obs))/(perm + 1.0);
-    rsq_adj_sta = 1.0 - (1.0/(1.0-mean (rsq_exp_sta))*(1.0-rsq_obs));  // Calculate rsq_adj_sta using values from standard permutation test
+    //rsq_adj_sta = 1.0 - (1.0/(1.0-mean (rsq_exp_sta))*(1.0-rsq_obs));  // Calculate rsq_adj_sta using values from standard permutation test
   };
   
   if (is_in (CharacterVector::create ("modified", "colbased", "max"), test)){
@@ -528,7 +526,7 @@ List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, c
       _["stderr"] = lm_obs["stderr"],                   
       _["r2"] = rsq_obs,
       _["r2adj"] = rsq_adj,
-      _["r2adj_sta"] = rsq_adj_sta,
+      //_["r2adj_sta"] = rsq_adj_sta,  # R2 adjusted by standard perm test
       _["r2adj_mod"] = rsq_adj_mod,
       _["n_sit"] = eLt["n_sit"],
       _["n_spe"] = eLt["n_spe"],

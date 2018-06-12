@@ -19,7 +19,7 @@
 #' @examples
 #' # Calculation of weighted mean of species Ellenberg indicator values using dataset Vltava
 #' data (vltava)
-#' mean.eiv <- cwm (com = vltava$spe, traits = vltava$ell)
+#' mean.eiv <- cwm (com = vltava$spe, traits = vltava$eiv)
 #' 
 #' summary (mean.eiv)
 #' 
@@ -48,6 +48,7 @@ cwm <- function (com, traits, wstand = FALSE)
   } 
   com <- as.matrix (com)
   traits <- as.matrix (dummy (as.data.frame (traits)))
+  if (ncol (com) != nrow (traits)) stop ("The number of species in 'traits' does not match the number of species in 'com'!")
   if (is.null (colnames (traits))) colnames (traits) <- paste ('trait', 1:ncol (traits), sep = '_')
   if (any (is.na(colnames(traits)))) colnames (traits)[is.na (colnames (traits))] <- paste ('trait', seq (1, sum (is.na (colnames (traits)))), sep = '_')
   cwm.temp <- as.data.frame (cwmCpp (com, traits, wstand))   # Rcpp version of cwm function
