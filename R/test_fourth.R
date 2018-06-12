@@ -170,7 +170,6 @@ plot.testFOURTH <- function (x, alpha = 0.05, line = NA, cex.lab = 1.5, par.mar 
     COM_COM <- as.vector (as.matrix (COM))
     
     COM_scaled <- vegan::decostand (COM_COM, 'range')*1 + 0.5
-    
     plot (TRA_COM ~ ENV_COM, pch = 16, ann = F, axes = F, cex = COM_scaled )
     axis (1, labels = ifelse (te$bottom_label, TRUE, FALSE), tck = 0.05)
     axis (2, labels = ifelse (te$left_label, TRUE, FALSE), tck = 0.05)
