@@ -17,7 +17,7 @@ is.cwm(object)
 
 \method{[}{cwm}(object, i, j, drop = FALSE)
 
-\method{summary}{cwm}(object, long = F, ...)
+\method{summary}{cwm}(object, long = FALSE, ...)
 
 \method{print}{cwm}(x, ...)
 

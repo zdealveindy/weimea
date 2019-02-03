@@ -25,12 +25,21 @@
 #' @export
 #' @examples 
 #' data (vltava)
-#' CWM <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
-#' re <- test_cwm (cwm = CWM, env = vltava$env[,c('pH', 'COVERE32')])
-#' re
-#' plot (re)
+#' 
+#' # Traits vs environment (tested by max test)
+#' CWM_traits <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
+#' re_traits <- test_cwm (cwm = CWM_traits, env = vltava$env[,c('pH', 'COVERE32')], method = 'lm', adjustP = TRUE)
+#' re_traits
+#' plot (re_traits)
+#'
+#' # Ellenberg indicator values vs assignment of plots into groups (by cluster analysis)
+#' # (tested by modified (column-based) permutation test)
+#' CWM_ell <- cwm (com = vltava$spe, traits = vltava$civ[,1:5]) 
+#' re_ell <- test_cwm (cwm = CWM_ell, env = as.factor (vltava$env$GROUP), test = 'modif', method = 'aov', adjustP = TRUE)
+#' re_ell
+#' plot (re_ell)
 #' @details
-#' Currently implemented statistical methods: \code{'cor'}. Plan to implement also: \code{'lm'} and \code{'aov'}. For fourth corner, please use \code{\link{test_fourth}}.
+#' Currently implemented statistical methods: \code{'cor'}, \code{'lm'} and \code{'aov'}. For fourth corner use \code{\link{test_fourth}}.
 #'
 #' Argument \code{env} can be vector or matrix with one column. Only in the case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 #' 
@@ -65,7 +74,9 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
   if ('all' %in% test) test <- c('parametric', 'rowbased', 'colbased', 'max')
   dependence <- match.arg (dependence, DEPENDENCE)
   
-  if (method == 'cor' & any (unlist (lapply (env, is.factor)))) stop ("Object env contains factors; to calculate correlation of factor and CWM is not meaningful. Consider using method = 'lm' or method = 'aov' instead.")
+  if (method == 'cor' & any (unlist (lapply (env, is.factor)))) stop ("Object env contains factors; to calculate correlation of factor and CWM is not meaningful. Consider using method = 'aov' instead.")
+  if (method == 'lm' & any (unlist (lapply (env, is.factor)))) stop ("Object env contains factors; to calculate correlation of factor and CWM is not meaningful. Consider using method = 'aov' instead.")
+  if (method == 'aov' & any (unlist (lapply (env, is.numeric)))) stop ("Object env contains one or more variables which are not factors; to calculate ANOVA is not meaningful.")
   
   if (!is.cwm (cwm) & ("modified" %in% test || "colbased" %in% test || "max" %in% test || "all" %in% test)) stop ("Object cwm must be of 'cwm' class")
   env <- as.data.frame (env)
@@ -73,7 +84,7 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
   com <- attr (cwm, 'com')
   traits <- attr (cwm, 'traits')
 
-# correlation - function 'cor'
+# correlation - function 'cor' ----
   if (method == 'cor')
   {
     vars.names <- expand.grid (traits = colnames (traits), env = colnames (env), stringsAsFactors = FALSE)
@@ -91,60 +102,58 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
     names (res) <- apply (vars.names, 1, FUN = function (x) paste (x[1], x[2], sep = ' / '))
    }
 
-# linear regression - function 'lm'
-if (method == 'lm')
-{
-  # if (dependence == 'cwm ~ env')
-  #   vars.names <- expand.grid (traits = colnames (traits), env = colnames (env), stringsAsFactors = FALSE) else
-  #     vars.names <- expand.grid (env = colnames (env), traits = colnames (traits), stringsAsFactors = FALSE)[,2:1]
-  vars.names <- expand.grid (traits = colnames (traits), env = colnames (env), stringsAsFactors = FALSE)
-  
-  if (is.null (parallel)) 
-    res <- apply (vars.names, 1, FUN = function (var12) test_cwm_lm (e = as.matrix (env[, var12[2], drop = FALSE]), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, dependence = dependence, perm = perm, wstand = wstand))
-  else
+  # linear regression - function 'lm' ----
+  if (method == 'lm')
   {
-    cl <- parallel::makeCluster (parallel)
-    parallel::clusterExport (cl, varlist = c('vars.names', 'com', 'traits', 'env', 'test', 'perm'), envir = environment ())
-    parallel::clusterEvalQ (cl, eval (call ('library', 'weimea')))
-    res <- parallel::parApply (cl, vars.names, 1, FUN = function (var12) test_cwm_lm (e = as.matrix (env[, var12[2], drop = FALSE]), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, dependence = dependence, perm = perm, wstand = wstand))
+    vars.names <- expand.grid (traits = colnames (traits), env = colnames (env), stringsAsFactors = FALSE)
+    
+    if (is.null (parallel)) 
+      res <- apply (vars.names, 1, FUN = function (var12) test_cwm_lm (e = as.matrix (env[, var12[2], drop = FALSE]), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, dependence = dependence, perm = perm, wstand = wstand))
+    else
+    {
+      cl <- parallel::makeCluster (parallel)
+      parallel::clusterExport (cl, varlist = c('vars.names', 'com', 'traits', 'env', 'test', 'perm'), envir = environment ())
+      parallel::clusterEvalQ (cl, eval (call ('library', 'weimea')))
+      res <- parallel::parApply (cl, vars.names, 1, FUN = function (var12) test_cwm_lm (e = as.matrix (env[, var12[2], drop = FALSE]), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, dependence = dependence, perm = perm, wstand = wstand))
+    }
+    names (res) <- apply (if (dependence == 'cwm ~ env') vars.names[,1:2] else vars.names[,2:1], 1, FUN = function (x) paste (x[1], x[2], sep = ' ~ '))
   }
-  names (res) <- apply (if (dependence == 'cwm ~ env') vars.names[,1:2] else vars.names[,2:1], 1, FUN = function (x) paste (x[1], x[2], sep = ' ~ '))
-}
+
+  dummy <- function(df) {  
+    as.dummy <- function (var) 
+    {
+      res <- model.matrix (~ as.matrix  (var) - 1)
+      lev <- levels (var)
+      colnames (res) <- lev
+      return (res)
+    }
+    temp_res <- lapply (df, FUN = function (column) if (is.factor (column)) as.dummy (column) else column)
+    do.call (cbind.data.frame, temp_res)
+  }
   
-#     # linear regression - function fastLM_cwm
-#   if (method == 'lm')
-#   {
-#     vars.names <- if (dependence == 'cwm ~ env') colnames (cwm) else colnames (env)
-#       
-#     if (is.null (parallel)) {
-#       if (dependence == 'cwm ~ env') 
-#         res <- lapply (vars.names, FUN = function (var1) test_cwm_lm (com = as.matrix (com), traits = as.matrix (traits[, var1, drop = F]), env = as.matrix (env), test = test, dependence = dependence, perm = perm)) else
-#           res <- lapply (vars.names, FUN = function (var1) test_cwm_lm (com = as.matrix (com), traits = as.matrix (traits), env = as.matrix (env[, var1, drop = F]), test = test, dependence = dependence, perm = perm))
-#     } else
-#        {
-#         cl <- parallel::makeCluster (parallel)
-#         parallel::clusterExport (cl, varlist = c('vars.names', 'com', 'traits', 'env', 'test', 'dependence', 'perm', 'testLR.P', 'testLR.perm'), envir = environment ())
-#         parallel::clusterEvalQ (cl, eval (call ('library', 'weimea')))
-#         if (dependence == 'cwm ~ env') 
-#           res <- parallel::parLapply (cl, vars.names, FUN = function (var1) test_cwm_lm (com = as.matrix (com), traits = as.matrix (traits[, var1, drop = F]), env = as.matrix (env), test = test, dependence = dependence, perm = perm)) else
-#             res <- parallel::parLapply (cl, vars.names, FUN = function (var1) test_cwm_lm (com = as.matrix (com), traits = as.matrix (traits), env = as.matrix (env[, var1, drop = F]), test = test, dependence = dependence, perm = perm))
-#       }
-#   lapply (res, FUN = function (x) x$coef)  
-#   names (res) <- vars.names
-#   for (i in seq (1, length (res))) rownames (res[[i]]$coef) <- c ('intercept', names (env))
-#   }
-# 
-#   if (method == 'fourthcorner')   # implementation of fourth.corner.ade doesn't allow to go parallel
-#   {
-#     res <- fourth.corner (L = com, Q = traits, R = env, chessel = chessel)
-#   }
+  # analysis of variance - function 'aov' ----
+  if (method == 'aov')
+  {
+    vars.names <- expand.grid (traits = colnames (traits), env = colnames (env), stringsAsFactors = FALSE)
+    if (is.null (parallel)) 
+      res <- apply (vars.names, 1, FUN = function (var12) weimea:::test_cwm_aov (e = as.matrix (dummy (env[, as.character (var12[2]), drop = FALSE])), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, perm = perm, wstand = wstand))
+    else
+    {
+      cl <- parallel::makeCluster (parallel)
+      parallel::clusterExport (cl, varlist = c('vars.names', 'com', 'traits', 'env', 'test', 'perm'), envir = environment ())
+      parallel::clusterEvalQ (cl, eval (call ('library', 'weimea')))
+      res <- parallel::parApply (cl, vars.names, 1, FUN = function (var12) test_cwm_aov (e = as.matrix (env[, var12[2], drop = FALSE]), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test,perm = perm, wstand = wstand))
+    }
+    names (res) <- apply (vars.names[,1:2], 1, FUN = function (x) paste (x[1], x[2], sep = ' ~ '))
+  }
+  
+  
   res.coef <- lapply (res, FUN = function (x) x[1:(length (x)-3)])
   res.miss <- lapply (res, FUN = function (x) x[(length (x)-2):length (x)])
   if (method == 'lm') res.coef <- lapply (res.coef, FUN = function (x) c(interc = x$coef[1], interc_se = x$stderr[1], coef = x$coef[2], coef_se = x$stderr[2], x[-1:-2]) )
   res.out <- do.call (rbind.data.frame, res.coef)
   test.choice <- c('parametric', 'standard', 'rowbased', 'modified', 'colbased', 'max')
-  test.P.xxx <- c ('P_par', 'P_row', 'P_row', 'P_col', 'P_col', 'P_max')
-  P.test <- test.P.xxx[test.choice %in% test]
+  P.test <- c ('P_par', 'P_row', 'P_row', 'P_col', 'P_col', 'P_max')[test.choice %in% test]
   res.coefs <- res.out [,!substr (colnames (res.out), 1, 2) %in% 'P_']
   res.out <- cbind (res.coefs, res.out[, P.test, drop = F])
   if (adjustP && test != 'none') {
@@ -164,14 +173,17 @@ print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.
   cs.ind <- switch (x$param$method, 
                     'cor' = 1,
                     'lm' = 1:4,
+                    'aov' = 1:2,
                     'fourthcorner' = 1:2)
   tst.ind <- switch (x$param$method,
                      'cor' = 2,
                      'lm' = c(5:7, 10),
+                     'aov' = c(5:7, 10),
                      'fourthcorner' = 0)
   df.ind <- switch (x$param$method,
                     'cor' = 3:4,
                     'lm'= 8:9,
+                    'aov' = c(3:4, 8:9),
                     'fourthcorner' = 3:4)
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
       "\n\n", sep = "")
@@ -396,7 +408,8 @@ plot.testCWM <- function (x, alpha = 0.05, line = NA, cex.lab = 1.5, par.mar = c
   traits.env <- cbind (traits.env, left_label = left_label, bottom_label = bottom_label)
   if (!is.null (test))
     if (x$param$method == 'cor') traits.env <- cbind (traits.env, test = test, r = x$out$r) else
-      if (x$param$method == 'lm') traits.env <- cbind (traits.env, test = test, r = x$out$coef)  # correlation is evaluated by slope of reg
+      if (x$param$method == 'lm') traits.env <- cbind (traits.env, test = test, r = x$out$coef) else
+        if (x$param$method == 'aov') traits.env <- cbind (traits.env, test = test, r = x$out$F)
   
   
   for (i in seq (1, nrow (traits.env)))

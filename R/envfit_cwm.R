@@ -52,7 +52,7 @@ envfit_cwm <- function (ord, cwm, wstand = attr (cwm, 'wstand'), permutations = 
       w <- rep(w, nrow(X))
     if (nrow(cwm) != nrow(X)) 
       stop("input data have non-matching numbers of observations")
-    out.vectorfit <- vectorfit_cwmCpp(X = as.matrix (X), L = as.matrix (extract.cwm (cwm, 'com')), t = as.matrix (extract.cwm (cwm, 'traits')), wstand = wstand, perm = permutations, w = w, test = test)
+    out.vectorfit <- vectorfit_cwmCpp(X = as.matrix (X), L = as.matrix (extract (cwm, 'com')), t = as.matrix (extract (cwm, 'traits')), wstand = wstand, perm = permutations, w = w, test = test)
     
     heads <- t(out.vectorfit$heads)
     if (is.null(colnames(X))) 

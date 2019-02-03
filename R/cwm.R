@@ -32,20 +32,20 @@
 #' @export
 cwm <- function (com, traits, wstand = FALSE)
 {
+   
   dummy <- function(df) {  
-    NUM <- function(dataframe)dataframe[,sapply(dataframe,is.numeric), drop = F]
-    FAC <- function(dataframe)dataframe[,sapply(dataframe,is.factor), drop = F]
-    if (is.null(ncol(FAC(df))) || ncol(FAC(df)) == 0)
-      DF <- df else {
-        if (is.null(ncol(NUM(df))) || ncol(NUM(df)) == 0) {
-          DF <- data.frame(NUM(df), ade4::acm.disjonctif(FAC(df)))
-          names(DF)[1] <- colnames(df)[which(sapply(df, is.numeric))]
-        } else {
-          DF <- data.frame(NUM(df), ade4::acm.disjonctif(FAC(df)))
-        }
-      }
-    return(DF)
-  } 
+    as.dummy <- function (var) 
+    {
+      res <- model.matrix (~ as.matrix  (var) - 1)
+      lev <- levels (var)
+      colnames (res) <- lev
+      return (res)
+    }
+    temp_res <- lapply (df, FUN = function (column) if (is.factor (column)) as.dummy (column) else column)
+    res <- do.call (cbind.data.frame, temp_res)
+    return (res)
+  }
+
   com <- as.matrix (com)
   traits <- as.matrix (dummy (as.data.frame (traits)))
   if (ncol (com) != nrow (traits)) stop ("The number of species in 'traits' does not match the number of species in 'com'!")
@@ -100,7 +100,8 @@ is.cwm <- function (object)
 
 #' @rdname cwm
 #' @param long should summary return long output? (TRUE vs FALSE)
-summary.cwm <- function (object, long = F, ...)
+#' @export
+summary.cwm <- function (object, long = FALSE, ...)
 {
   com <- attr (object, 'com')
   traits <- attr (object, 'traits')
@@ -133,7 +134,9 @@ print.cwm <- function (x, ...)
 extract <- function (x, ...) UseMethod ('extract')
 
 #' @rdname cwm
+#' @export
 #' @param what Attributes extracted from the object of class \code{cwm}; either \code{traits} for the matrix of species attributes (species x traits), or \code{com} for matrix of species composition (samples x species).
+#' 
 extract.cwm <- function (x, what = 'traits', ...)
 {
   WHAT <- c('traits', 'com')

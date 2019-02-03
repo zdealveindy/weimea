@@ -306,6 +306,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_cwm_aov
+List test_cwm_aov(arma::mat e, arma::mat L, arma::mat t, CharacterVector test, int perm, bool wstand);
+RcppExport SEXP _weimea_test_cwm_aov(SEXP eSEXP, SEXP LSEXP, SEXP tSEXP, SEXP testSEXP, SEXP permSEXP, SEXP wstandSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type e(eSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type L(LSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type t(tSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type test(testSEXP);
+    Rcpp::traits::input_parameter< int >::type perm(permSEXP);
+    Rcpp::traits::input_parameter< bool >::type wstand(wstandSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_cwm_aov(e, L, t, test, perm, wstand));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lm_vectorfitCpp
 List lm_vectorfitCpp(arma::mat X, arma::mat P);
 RcppExport SEXP _weimea_lm_vectorfitCpp(SEXP XSEXP, SEXP PSEXP) {
@@ -361,6 +377,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_weimea_test_fourthCpp", (DL_FUNC) &_weimea_test_fourthCpp, 5},
     {"_weimea_fastLm_cwm", (DL_FUNC) &_weimea_fastLm_cwm, 3},
     {"_weimea_test_cwm_lm", (DL_FUNC) &_weimea_test_cwm_lm, 7},
+    {"_weimea_test_cwm_aov", (DL_FUNC) &_weimea_test_cwm_aov, 6},
     {"_weimea_lm_vectorfitCpp", (DL_FUNC) &_weimea_lm_vectorfitCpp, 2},
     {"_weimea_vectorfit_cwmCpp", (DL_FUNC) &_weimea_vectorfit_cwmCpp, 7},
     {NULL, NULL, 0}

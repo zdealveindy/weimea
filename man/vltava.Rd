@@ -70,7 +70,7 @@ Environmental variables include:
 \references{
 Ellenberg H., Weber H.E., Dull R., Wirth V., Werner W. & Paulissen D. 1991. Zeigerwerte von Pflanzen in Mitteleuropa. Scripta Geobotanica 18: 1-248.
 
-Chytry M., Tichy L., Drevojan P., Sadlo J. & Zeleny D. (2018): Ellenberg-type indicator values for the Czech flora. Preslia 90: 83–103.
+Chytry M., Tichy L., Drevojan P., Sadlo J. & Zeleny D. (2018): Ellenberg-type indicator values for the Czech flora. Preslia 90: 83-103.
 
 Kleyer M., Bekker R.M., Knevel I.C., Bakker J.P., Tompson K., Sonnenshein M. et al. (2008) The LEDA Traitbase: a database of life-history traits of Northwest European flora. Journal of Ecology, 96, 1266-1274.
 

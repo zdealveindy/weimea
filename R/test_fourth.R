@@ -46,7 +46,6 @@ test_fourth <- function (env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
   if ('none' %in% test) test <- 'none'
   if ('all' %in% test) test <- c('rowbased', 'colbased', 'max')
   env <- as.data.frame (as.matrix (env))
-  traits <- as.data.frame (as.matrix (traits))
   if ( all (!is.null(cwm)&!is.null (com)&!is.null (traits)) | !is.null (cwm)&!is.null (com) | !is.null(cwm)&!is.null(traits)) stop ('Species composition and traits need to be provided using either com and traits argument or cwm argument; combining both is not possible!') 
   if (is.null (com) & is.null (traits)) {
     if (is.null (cwm)) stop ('You need to provide species composition data and traits, either using com and traits arguments, or cwm!') else

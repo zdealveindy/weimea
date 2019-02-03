@@ -70,7 +70,7 @@ Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} an
 Function calculating relationship between weighted-mean of species attributes and sample attributes and performing standard (row based), modified (column based), or max test of significance.
 }
 \details{
-Currently implemented statistical methods: \code{'cor'}. Plan to implement also: \code{'lm'} and \code{'aov'}. For fourth corner, please use \code{\link{test_fourth}}.
+Currently implemented statistical methods: \code{'cor'}, \code{'lm'} and \code{'aov'}. For fourth corner use \code{\link{test_fourth}}.
 
 Argument \code{env} can be vector or matrix with one column. Only in the case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 
@@ -82,10 +82,19 @@ Specific issue related to weighted mean is the case of missing species attribute
 }
 \examples{
 data (vltava)
-CWM <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
-re <- test_cwm (cwm = CWM, env = vltava$env[,c('pH', 'COVERE32')])
-re
-plot (re)
+
+# Traits vs environment (tested by max test)
+CWM_traits <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
+re_traits <- test_cwm (cwm = CWM_traits, env = vltava$env[,c('pH', 'COVERE32')], method = 'lm', adjustP = TRUE)
+re_traits
+plot (re_traits)
+
+# Ellenberg indicator values vs assignment of plots into groups (by cluster analysis)
+# (tested by modified (column-based) permutation test)
+CWM_ell <- cwm (com = vltava$spe, traits = vltava$civ[,1:5]) 
+re_ell <- test_cwm (cwm = CWM_ell, env = as.factor (vltava$env$GROUP), test = 'modif', method = 'aov', adjustP = TRUE)
+re_ell
+plot (re_ell)
 }
 \seealso{
 \code{\link{cwm}}, \code{\link{snc}}

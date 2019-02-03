@@ -208,6 +208,12 @@ arma::vec sncCpp2 (arma::mat L, arma::vec e) {
 double ca_eig1_sqrt (arma::mat Y){
   arma::vec fi_ = rowSumsCpp (Y); 
   arma::vec f_j = colSumsCpp (Y);
+  if (sum (fi_.elem(uvec(find(fi_==0)))) == 0 || sum (f_j.elem(uvec(find(f_j==0)))) == 0)  // if any row or col is empty, remove it
+  {
+    Y = Y.submat (find (fi_ > 0), find (f_j > 0));
+    fi_ = rowSumsCpp (Y);
+    f_j = colSumsCpp (Y);
+  }
   double f_ = sum (fi_);
   arma::vec pi_ = fi_/f_;
   arma::vec p_j = f_j/f_;
@@ -441,6 +447,8 @@ List fastLm_cwm (const arma::mat& X, const arma::colvec& y, bool stderr_incl) {
   double F = (mss/mdf)/(rss/rdf);
   return List::create(_["coefficients"] = coef,
                       _["stderr"] = std_err,
+                      _["sum.sq"] = mss,
+                      _["res.sq"] = rss,
                       _["df.residual"]  = rdf,
                       _["df.model"] = mdf,
                       _["F.value"] = F,
@@ -541,6 +549,85 @@ List test_cwm_lm (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, c
   
 );
 }
+
+//[[Rcpp::export]]
+List test_cwm_aov (arma::mat e, arma::mat L, arma::mat t, CharacterVector test, int perm, bool wstand) {
+  
+  List eLt = rm_missing_eLt (e, L, t);  // removing rows and columns in L with missing e and/or t, resp; removing rows with not enough species to calculate
+  arma::mat e_temp = eLt["e"];
+  arma::mat L_temp = eLt["L"];
+  arma::mat t_temp = eLt["t"];
+  int n = L_temp.n_rows, p;
+  
+  arma::mat cwm = cwmCpp (L_temp, t_temp, wstand);
+  
+  List aov_obs;
+  aov_obs = fastLm_cwm (e_temp, cwm, TRUE);
+  p = e_temp.n_cols; 
+  
+  double rsq_obs = aov_obs["R.squared"];
+  double rsq_adj = 1.0 - ((n - 1.0)/(n - p - 1.0))*(1.0 - rsq_obs);  // Calculate rsq_adj using Ezekiel's formula
+  double rsq_adj_mod = NA_REAL; // rsq_adj_sta = NA_REAL
+  double F_obs = aov_obs["F.value"];
+  double P_par = R::pf (F_obs, aov_obs["df.model"], aov_obs["df.residual"], FALSE, FALSE);
+  double P_row = NA_REAL, P_col = NA_REAL, P_max = NA_REAL;
+  
+  if (is_in (CharacterVector::create ("standard", "rowbased", "max"), test)){
+    arma::vec rsq_exp_sta (perm);
+    arma::vec F_exp_sta (perm+1);
+    for (int nperm = 0; nperm < perm; nperm++){
+      arma::mat e_rand = shuffle (e_temp, 0);  // rows of e_temp are shuffled
+      List aov_exp;
+      aov_exp = fastLm_cwm (e_rand, cwm, FALSE);
+      rsq_exp_sta (nperm) = aov_exp["R.squared"];  // r.sq for calculation of permutation-based adjusted r.sq
+      F_exp_sta (nperm) = aov_exp["F.value"];
+    }
+    F_exp_sta (perm) = F_obs; //observed values is put on the last place of the vector
+    P_row = sum (abs (F_exp_sta) >= std::abs (F_obs))/(perm + 1.0);
+    //rsq_adj_sta = 1.0 - (1.0/(1.0-mean (rsq_exp_sta))*(1.0-rsq_obs));  // Calculate rsq_adj_sta using values from standard permutation test
+  };
+  
+  if (is_in (CharacterVector::create ("modified", "colbased", "max"), test)){
+    arma::vec rsq_exp_mod (perm);  // for adjusted R2
+    arma::vec F_exp_mod (perm+1);
+    for (int nperm = 0; nperm < perm; nperm++){
+      arma::mat cwm_rand = cwmCpp (L_temp, shuffle (t_temp, 0), wstand);
+      List aov_exp;
+      aov_exp = fastLm_cwm (e_temp, cwm_rand, FALSE);
+      rsq_exp_mod [nperm] = aov_exp["R.squared"];  // r.sq for calculation of permutation-based r.sq
+      F_exp_mod [nperm] = aov_exp["F.value"];
+    }
+    F_exp_mod (perm) = F_obs; //observed values is put on the last place of the vector
+    P_col = sum (abs (F_exp_mod) >= std::abs (F_obs))/(perm + 1.0);
+    rsq_adj_mod = 1.0 - (1.0/(1.0-mean (rsq_exp_mod))*(1.0-rsq_obs));
+  };
+  
+  if (is_in ("max", test)){
+    P_max = max (NumericVector::create(P_col, P_row));
+  };
+  
+  return List::create (
+      _["sum_sq"] = aov_obs["sum.sq"],
+      _["res_sq"] = aov_obs["res.sq"],
+      _["df_res"] = aov_obs["df.residual"],
+      _["df_mod"] = aov_obs["df.model"],                                          
+      _["r2"] = rsq_obs,
+      _["r2adj"] = rsq_adj,
+      //_["r2adj_sta"] = rsq_adj_sta,  # R2 adjusted by standard perm test
+      _["r2adj_mod"] = rsq_adj_mod,
+      _["n_sit"] = eLt["n_sit"],
+      _["n_spe"] = eLt["n_spe"],
+      _["F"] = F_obs,
+      _["P_par"] = P_par,
+      _["P_row"] = P_row,
+      _["P_col"] = P_col,
+      _["P_max"] = P_max,
+      _["e_missing"] = eLt["e_missing"],
+      _["t_missing"] = eLt["t_missing"],
+      _["c_missing"] = eLt["c_missing"]
+  );
+}
+
 
 //[[Rcpp::export]]
 List lm_vectorfitCpp (arma::mat X, arma::mat P){

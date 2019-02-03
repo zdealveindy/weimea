@@ -97,6 +97,10 @@ test_cwm_lm <- function(e, L, t, test, dependence, perm, wstand) {
     .Call('_weimea_test_cwm_lm', PACKAGE = 'weimea', e, L, t, test, dependence, perm, wstand)
 }
 
+test_cwm_aov <- function(e, L, t, test, perm, wstand) {
+    .Call('_weimea_test_cwm_aov', PACKAGE = 'weimea', e, L, t, test, perm, wstand)
+}
+
 lm_vectorfitCpp <- function(X, P) {
     .Call('_weimea_lm_vectorfitCpp', PACKAGE = 'weimea', X, P)
 }
