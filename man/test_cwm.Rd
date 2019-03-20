@@ -8,11 +8,13 @@
 \title{Testing the relationship between weighted-mean of species attributes with sample attributes}
 \usage{
 test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
-  wreg = NULL, dependence = "cwm ~ env", perm = 499, test = "max",
-  parallel = NULL, p.adjust.method = "holm", adjustP = FALSE)
+  wreg = FALSE, wsamp = NULL, dependence = "cwm ~ env", perm = 499,
+  test = "max", parallel = NULL, p.adjust.method = "holm",
+  adjustP = FALSE)
 
 \method{print}{testCWM}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = FALSE, adjustP = FALSE, eps.Pvalue = 0.001, ...)
+  missing.summary = FALSE, eps.Pvalue = 0.001,
+  signif.stars = getOption("show.signif.stars"), ...)
 
 \method{coef}{testCWM}(object, ...)
 
@@ -31,7 +33,7 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
 
 \item{wstand}{Logical; should the variables in correlation be first weighted-standardized? Default \code{FALSE}. If \code{wstand = TRUE}, both \code{env} and \code{traits} are weighted standardized prior to calcuation; weights are derived from \code{com} matrix (extracted from \code{cwm}); \code{env} is weighted by rowsums of \code{com}, while \code{traits} are weighted by colsums of \code{com}.}
 
-\item{wreg}{\code{NULL} (default) or numeric vector of weights used in regression (\code{method = 'lm'}). If weights are provided, weighted least squares are calculated instead of ordinary least squares.}
+\item{wreg}{logical; should weights be used in regression (\code{method = 'lm'})? If \code{TRUE}, weighted least squares are calculated instead of ordinary least squares.}
 
 \item{dependence}{Should \code{cwm} be dependent variable and \code{env} independent (\code{'cwm ~ env'}), or opposite? Applicable only for \code{method = 'lm'}. Partial match to \code{'cwm ~ env'} and \code{'env ~ cwm'}.}
 
@@ -52,6 +54,8 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
 \item{missing.summary}{Logical; should be the summary of values missing in \code{env}, \code{cwm} and \code{traits} be printed along to the result of \code{test_cwm} analysis? Default is \code{TRUE}.}
 
 \item{eps.Pvalue}{Values of P below this threshold will be printed as \code{< [eps]} in the output.}
+
+\item{signif.stars}{Logical; if TRUE, P-values are additionally encoded visually as 'significance stars' in order to help scanning of long coefficient tables. It defaults to the show.signif.stars slot of \code{\link{options}}.}
 
 \item{...}{Other arguments for \code{print}, \code{summary}, \code{coef} or \code{plot} functions (some not implemented yet).}
 
@@ -74,25 +78,25 @@ Currently implemented statistical methods: \code{'cor'}, \code{'lm'} and \code{'
 
 Argument \code{env} can be vector or matrix with one column. Only in the case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 
-Difference between \code{method = 'lm'} and \code{'aov'} is in the format of summary tables, returned by \code{summary.cwm} function. In case of 'aov', this summary is expressed in the traditional language of ANOVA rather than linear models.
+Specific issue related to weighted mean is the case of missing species attributes. In current implementation, species with missing species attributes are removed from sample x species matrix prior to permutation of species attributes among species. 
 
-Both \code{method = 'lm'} and \code{'slope'} are based on linear regression and calculated by function \code{\link{lm}}, but differ by test statistic: while 'lm' is using F value and is testing the strength of the regression (measured by r2), 'slope' is using the slope of the regression line (b). This statistic is added here for comparison with the fourth corner method.
-
-Specific issue related to weighted mean is the case of missing species attributes. In current implementation, species with missing species attributes are removed from sample x species matrix prior to permutation of species attributes among species.
+The \code{plot} functions will plot pairwise relationships between CWM and environmental variables, as a scatterplots in case of \code{method = 'cor'} and \code{'lm'} and as boxplot in case of \code{method = 'aov'}. Significant relationships are highlighted in the figure by colorful border; the P-values used for this highlighting are the last one listed in the summary output. If you don't like this behaviour, limit the analysis to a single test only - in that case this test will be used to highlight the significant results.
 }
 \examples{
 data (vltava)
 
 # Traits vs environment (tested by max test)
 CWM_traits <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
-re_traits <- test_cwm (cwm = CWM_traits, env = vltava$env[,c('pH', 'COVERE32')], method = 'lm', adjustP = TRUE)
+re_traits <- test_cwm (cwm = CWM_traits, env = vltava$env[,c('pH', 'COVERE32')],
+ method = 'lm', adjustP = TRUE)
 re_traits
 plot (re_traits)
 
 # Ellenberg indicator values vs assignment of plots into groups (by cluster analysis)
 # (tested by modified (column-based) permutation test)
 CWM_ell <- cwm (com = vltava$spe, traits = vltava$civ[,1:5]) 
-re_ell <- test_cwm (cwm = CWM_ell, env = as.factor (vltava$env$GROUP), test = 'modif', method = 'aov', adjustP = TRUE)
+re_ell <- test_cwm (cwm = CWM_ell, env = as.factor (vltava$env$GROUP), test = 'modif',
+ method = 'aov', adjustP = TRUE)
 re_ell
 plot (re_ell)
 }

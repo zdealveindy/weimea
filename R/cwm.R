@@ -87,17 +87,6 @@ is.cwm <- function (object)
   res
 }
 
-#' #' @rdname cwm
-#' #' @export
-#' as.matrix.cwm <- function (x, ...)
-#' {
-#'   attr (x, 'com') <- NULL
-#'   attr (x, 'traits') <- NULL
-#'   attr (x, 'wstand') <- NULL
-#'   x <- as.matrix (unclass (x))
-#'   return (x)
-#' }
-
 #' @rdname cwm
 #' @param long should summary return long output? (TRUE vs FALSE)
 #' @export

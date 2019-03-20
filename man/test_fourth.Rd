@@ -12,7 +12,8 @@ test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
   adjustP = FALSE)
 
 \method{print}{testFOURTH}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = FALSE, ...)
+  missing.summary = FALSE, eps.Pvalue = 0.001,
+  signif.stars = getOption("show.signif.stars"), ...)
 
 \method{coef}{testFOURTH}(object, ...)
 
@@ -44,6 +45,10 @@ test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
 \item{digits}{number of digits reported by \code{print} method on object of \code{"cwm"} class (default is 3).}
 
 \item{missing.summary}{Logical; should be the summary of values missing in \code{env}, \code{cwm} and \code{traits} be printed along to the result of \code{test_cwm} analysis? Default is \code{TRUE}.}
+
+\item{eps.Pvalue}{Values of P below this threshold will be printed as \code{< [eps]} in the output.}
+
+\item{signif.stars}{Logical; if TRUE, P-values are additionally encoded visually as 'significance stars' in order to help scanning of long coefficient tables. It defaults to the show.signif.stars slot of \code{\link{options}}.}
 
 \item{...}{Other arguments for \code{print}, \code{summary} or \code{coef} functions (not implemented yet).}
 

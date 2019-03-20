@@ -8,7 +8,8 @@
 #' @param method Statistical method used to analyse the relationship between cwm (of class \code{cwm}) and env (sample attributes); partial match to \code{'cor'}, \code{'lm'} and \code{'aov'}. 
 #' @param wcor Logical; should the correlation be weighted by rowsums of \code{com} (extracted from \code{cwm}?). Default \code{FALSE}.
 #' @param wstand Logical; should the variables in correlation be first weighted-standardized? Default \code{FALSE}. If \code{wstand = TRUE}, both \code{env} and \code{traits} are weighted standardized prior to calcuation; weights are derived from \code{com} matrix (extracted from \code{cwm}); \code{env} is weighted by rowsums of \code{com}, while \code{traits} are weighted by colsums of \code{com}.
-#' @param wreg \code{NULL} (default) or numeric vector of weights used in regression (\code{method = 'lm'}). If weights are provided, weighted least squares are calculated instead of ordinary least squares.
+#' @param wreg logical; should weights be used in regression (\code{method = 'lm'})? If \code{TRUE}, weighted least squares are calculated instead of ordinary least squares.
+#' @param wsam \code{NULL} (default) or a numeric vector; if \code{wreg = TRUE}, weights provided here are used to calculate weighted least square regression; if \{wsam = NULL}, \code{rowSums (com)} are used as weights.
 #' @param dependence Should \code{cwm} be dependent variable and \code{env} independent (\code{'cwm ~ env'}), or opposite? Applicable only for \code{method = 'lm'}. Partial match to \code{'cwm ~ env'} and \code{'env ~ cwm'}.
 #' @param perm Number of permutations.
 #' @param test Vector of character values. Which test should be conducted? Partial match to \code{'standard'} or \code{'rowbased'} for standard (row based) permutation test, \code{'modified'} or \code{'colbased'} for modified (column based) permutation test, \code{'max'} for max test (selecting the higher from \code{rowbased} and \code{colbased} result), and \code{'all'} including all three tests. See \code{Details}.
@@ -19,6 +20,7 @@
 #' @param digits number of digits reported by \code{print} method on object of \code{"cwm"} class (default is 3).
 #' @param missing.summary Logical; should be the summary of values missing in \code{env}, \code{cwm} and \code{traits} be printed along to the result of \code{test_cwm} analysis? Default is \code{TRUE}.
 #' @param eps.Pvalue Values of P below this threshold will be printed as \code{< [eps]} in the output.
+#' @param signif.stars Logical; if TRUE, P-values are additionally encoded visually as 'significance stars' in order to help scanning of long coefficient tables. It defaults to the show.signif.stars slot of \code{\link{options}}.
 #' @param alpha,line,cex.lab,par.mar,box.col,box.lwd Graphical parameters for \code{plot} function.
 #' @param ... Other arguments for \code{print}, \code{summary}, \code{coef} or \code{plot} functions (some not implemented yet).
 
@@ -28,14 +30,16 @@
 #' 
 #' # Traits vs environment (tested by max test)
 #' CWM_traits <- cwm (com = vltava$herbs$spe, traits = vltava$herbs$traits)
-#' re_traits <- test_cwm (cwm = CWM_traits, env = vltava$env[,c('pH', 'COVERE32')], method = 'lm', adjustP = TRUE)
+#' re_traits <- test_cwm (cwm = CWM_traits, env = vltava$env[,c('pH', 'COVERE32')],
+#'  method = 'lm', adjustP = TRUE)
 #' re_traits
 #' plot (re_traits)
 #'
 #' # Ellenberg indicator values vs assignment of plots into groups (by cluster analysis)
 #' # (tested by modified (column-based) permutation test)
 #' CWM_ell <- cwm (com = vltava$spe, traits = vltava$civ[,1:5]) 
-#' re_ell <- test_cwm (cwm = CWM_ell, env = as.factor (vltava$env$GROUP), test = 'modif', method = 'aov', adjustP = TRUE)
+#' re_ell <- test_cwm (cwm = CWM_ell, env = as.factor (vltava$env$GROUP), test = 'modif',
+#'  method = 'aov', adjustP = TRUE)
 #' re_ell
 #' plot (re_ell)
 #' @details
@@ -43,13 +47,9 @@
 #'
 #' Argument \code{env} can be vector or matrix with one column. Only in the case of linear regression (\code{method = 'lm'}) it is possible to use matrix with several variables, which will all be used as independent variables in the model. For ANOVA and Kruskal-Wallis test, make sure that 'env' is \code{factor} (warning will be returned if this is not the case, but the calculation will be conducted). 
 #' 
-#' Difference between \code{method = 'lm'} and \code{'aov'} is in the format of summary tables, returned by \code{summary.cwm} function. In case of 'aov', this summary is expressed in the traditional language of ANOVA rather than linear models.
-#' 
-#' Both \code{method = 'lm'} and \code{'slope'} are based on linear regression and calculated by function \code{\link{lm}}, but differ by test statistic: while 'lm' is using F value and is testing the strength of the regression (measured by r2), 'slope' is using the slope of the regression line (b). This statistic is added here for comparison with the fourth corner method.
-#' 
 #' Specific issue related to weighted mean is the case of missing species attributes. In current implementation, species with missing species attributes are removed from sample x species matrix prior to permutation of species attributes among species. 
 #' 
-#' 
+#' The \code{plot} functions will plot pairwise relationships between CWM and environmental variables, as a scatterplots in case of \code{method = 'cor'} and \code{'lm'} and as boxplot in case of \code{method = 'aov'}. Significant relationships are highlighted in the figure by colorful border; the P-values used for this highlighting are the last one listed in the summary output. If you don't like this behaviour, limit the analysis to a single test only - in that case this test will be used to highlight the significant results.
 #' @return  Function \code{cwm} returns list of the class \code{"cwm"} (with \code{print} and \code{summary} methods), which contains the following components:
 #' \itemize{
 #'  \item \code{call} Call to the function.
@@ -60,8 +60,9 @@
 #' @seealso \code{\link{cwm}}, \code{\link{snc}}
 #' @importFrom graphics box par plot title axis boxplot layout lines plot.window
 #' @importFrom stats lm predict
+#' @importFrom stats model.matrix
 #' @export
-test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE, wreg = NULL, dependence = "cwm ~ env", perm = 499, test = "max", parallel = NULL, p.adjust.method = 'holm', adjustP = FALSE)
+test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE, wreg = FALSE, wsamp = NULL, dependence = "cwm ~ env", perm = 499, test = "max", parallel = NULL, p.adjust.method = 'holm', adjustP = FALSE)
 {
   CALL <- match.call ()
   METHOD <- c('cor', 'lm', 'aov')
@@ -136,7 +137,7 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
   {
     vars.names <- expand.grid (traits = colnames (traits), env = colnames (env), stringsAsFactors = FALSE)
     if (is.null (parallel)) 
-      res <- apply (vars.names, 1, FUN = function (var12) weimea:::test_cwm_aov (e = as.matrix (dummy (env[, as.character (var12[2]), drop = FALSE])), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, perm = perm, wstand = wstand))
+      res <- apply (vars.names, 1, FUN = function (var12) test_cwm_aov (e = as.matrix (dummy (env[, as.character (var12[2]), drop = FALSE])), L = as.matrix (com), t = as.matrix (traits[, var12[1], drop = FALSE]), test = test, perm = perm, wstand = wstand))
     else
     {
       cl <- parallel::makeCluster (parallel)
@@ -147,15 +148,13 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
     names (res) <- apply (vars.names[,1:2], 1, FUN = function (x) paste (x[1], x[2], sep = ' ~ '))
   }
   
-  
-  res.coef <- lapply (res, FUN = function (x) x[1:(length (x)-3)])
   res.miss <- lapply (res, FUN = function (x) x[(length (x)-2):length (x)])
+  res.coef <- lapply (res, FUN = function (x) x[1:(length (x)-3)])
   if (method == 'lm') res.coef <- lapply (res.coef, FUN = function (x) c(interc = x$coef[1], interc_se = x$stderr[1], coef = x$coef[2], coef_se = x$stderr[2], x[-1:-2]) )
-  res.out <- do.call (rbind.data.frame, res.coef)
+  res.coef.df <- do.call (rbind.data.frame, res.coef)
   test.choice <- c('parametric', 'standard', 'rowbased', 'modified', 'colbased', 'max')
   P.test <- c ('P_par', 'P_row', 'P_row', 'P_col', 'P_col', 'P_max')[test.choice %in% test]
-  res.coefs <- res.out [,!substr (colnames (res.out), 1, 2) %in% 'P_']
-  res.out <- cbind (res.coefs, res.out[, P.test, drop = F])
+  res.out <- cbind (res.coef.df [,!substr (colnames (res.coef.df), 1, 2) %in% 'P_'], res.coef.df[, P.test, drop = F])  # deletes all P values and adds only those specificed in "test" argument
   if (adjustP && test != 'none') {
     res.out <- cbind (res.out, p.adjust (res.out[, ncol (res.out)], method = p.adjust.method))
     colnames (res.out)[ncol (res.out)] <- paste (colnames (res.out)[ncol (res.out)-1], 'adj', sep = '_')
@@ -168,7 +167,7 @@ test_cwm <- function (cwm, env, method = c('cor'), wcor = FALSE, wstand = FALSE,
 
 #' @rdname test_cwm
 #' @export
-print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.summary = FALSE, adjustP = FALSE, eps.Pvalue = 0.001, ...)
+print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.summary = FALSE, eps.Pvalue = 0.001, signif.stars = getOption("show.signif.stars"), ...)
 {
   cs.ind <- switch (x$param$method, 
                     'cor' = 1,
@@ -187,7 +186,7 @@ print.testCWM <- function (x, digits = max(3, getOption("digits") - 3), missing.
                     'fourthcorner' = 3:4)
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
       "\n\n", sep = "")
-  printCoefmat2 (x$out, digits = digits, cs.ind = cs.ind, tst.ind = tst.ind, df.ind = df.ind, ...)
+  printCoefmat2 (x$out, digits = digits, cs.ind = cs.ind, tst.ind = tst.ind, df.ind = df.ind, eps.Pvalue = 0.001, signif.stars = signif.stars, ...)
   if (missing.summary) printMissum (x$miss)
   
 }
@@ -209,77 +208,6 @@ printMissum <- function (x){
 coef.testCWM <- function (object, ...)
   return (object$out)
  
-test.cwm.cor.spea <- function (com, traits, env, test, perm, testLR_P, testLR_perm) 
-{
-  com_temp <- com [!is.na (env), !is.na(traits)]
-  traits_temp <- traits [!is.na (traits)]
-  env_temp <- env [!is.na (env)]
-  CWM <- cwm (com_temp, traits_temp)
-  no_samples <- nrow (com_temp)
-  cor_temp <- cor.test (CWM, env_temp, method = "spearman")  # calculates Spearman's rho correlation coefficient
-  rho_obs <- cor_temp$estimate  
-  S_obs <- cor_temp$statistic  #(no_samples^3 - no_samples) * (1 - rho_obs)/6   # calculates S value
-  P_par <- cor_temp$p.value
-  P_sta <- NA
-  P_mod <- NA
-  P_max <- NA
-  env_rand <- NA
-  
-  if (test %in% c("standard", "rowbased", "twostep")){
-    rho_exp_sta <- vector ('numeric', length = perm + 1)
-    S_exp_sta <- vector ('numeric', length = perm + 1)
-    for (nperm in seq (1, perm)){
-      env_rand <- sample (env_temp) 
-      rho_exp_sta [nperm] <- as.vector (cor (CWM, env_rand, method = 'spearman'))  # original cwm with randomized R; there must be 'as.vector', otherwise the output is matrix and produces problem later in logical comparisons
-      S_exp_sta [nperm] <- (no_samples^3 - no_samples) * (1 - rho_exp_sta [nperm])/6
-    }
-    rho_exp_sta [perm+1] <- rho_obs #observed values is put on the last place of the vector
-    S_exp_sta [perm+1] <- S_obs #observed values is put on the last place of the vector
-    P_sta = min (sum (S_exp_sta >= S_obs), sum (S_exp_sta <= S_obs))/(perm + 1)
-  }
-  
-  if (test %in% c("modified", "twostep")){
-    rho_exp_mod <- vector ('numeric', length = perm + 1)
-    S_exp_mod <- vector ('numeric', length = perm + 1)
-    for (nperm in seq (1, perm)){
-      cwm_rand <- cwm (com_temp, sample (traits_temp))
-      rho_exp_mod [nperm] <- as.vector (cor (cwm_rand, env_temp, method = 'spearman')) # original R with cwm from randomized traits
-      S_exp_mod [nperm] <- (no_samples^3 - no_samples) * (1 - rho_exp_mod [nperm])/6
-    }
-    rho_exp_mod [perm + 1] <- rho_obs # observed values is put on the last place of the vector
-    S_exp_mod [perm + 1] <- S_obs  # observed values is put on the last place of the vector
-    P_mod <- min (sum (S_exp_mod >= S_obs), sum (S_exp_mod <= S_obs))/(perm + 1)
-  };
-  
-  if (test %in% "twostep"){
-    cwm_art <- cwm (com_temp, cwm (t(com_temp), env_temp))
-    rho_obs_LR <- as.vector (cor (cwm_art, env_temp, method = 'spearman'))  # calculates Spearman's rho correlation coefficient
-    S_obs_LR <- (no_samples^3 - no_samples) * (1 - rho_obs_LR)/6
-    rho_exp_LR <- vector ('numeric', length = testLR_perm + 1)
-    S_exp_LR <- vector ('numeric', length = testLR_perm + 1)
-    for (nperm in seq (1, testLR_perm)){
-      env_rand <- sample (env_temp)
-      cwm_exp <- cwm (com_temp, cwm (t(com_temp), env_rand))
-      rho_exp_LR [nperm] <- as.vector (cor (cwm_exp, env_rand, method = 'spearman'))
-      S_exp_LR [nperm] <- (no_samples^3 - no_samples) * (1 - rho_exp_LR[nperm])/6
-    }
-    rho_exp_LR [testLR_perm + 1] <- rho_obs_LR # observed values is put on the last place of the vector
-    S_exp_LR [testLR_perm + 1] <- S_obs_LR # observed values is put on the last place of the vector
-    P_LR <- min (sum (S_exp_LR >= S_obs_LR), sum (S_exp_LR <= S_obs_LR))/(perm + 1)
-    if (P_LR <= testLR_P) {P_two = P_mod} else {P_two = P_sta}
-  }
-  
-  return (list (
-    rho.obs = rho_obs,
-    S.obs = S_obs,
-    P.par = P_par,
-    P.row = P_sta,
-    P.col = P_mod,
-    P.LR = P_LR,
-    P.two = P_two
-  ))
-}
-
 join_mat <- function (mat1, mat2, incl1names = TRUE, incl2names = TRUE) {
   mat12 <- lapply (1: min (ncol (mat1), ncol (mat2)), FUN = function (i) {
     mat12_temp <- cbind (mat1[,i], mat2[,i])
@@ -290,8 +218,14 @@ join_mat <- function (mat1, mat2, incl1names = TRUE, incl2names = TRUE) {
   return (mat12)
 }
 
-printCoefmat2 <- function (x, digits = max(3L, getOption("digits") - 2L), signif.stars = getOption("show.signif.stars"), 
-                           signif.legend = signif.stars, dig.tst = max(1L, min(5L, digits - 1L)), cs.ind = NULL, tst.ind = NULL, df.ind = NULL, zap.ind = integer(), eps.Pvalue = 0.001, na.print = "NA", ...) 
+printCoefmat2 <- function (x, digits = max(3L, getOption("digits") - 2L),
+                           signif.stars = getOption("show.signif.stars"), 
+                           signif.legend = signif.stars,
+                           dig.tst = max(1L, min(5L, digits - 1L)),
+                           cs.ind = NULL, tst.ind = NULL,
+                           df.ind = NULL, zap.ind = integer(),
+                           eps.Pvalue = 0.001,
+                           na.print = "NA", ...) 
 {
   d <- dim(x)
   if (is.null(d) || length(d) != 2L) stop("'x' must be coefficient matrix/data frame")
@@ -332,9 +266,8 @@ printCoefmat2 <- function (x, digits = max(3L, getOption("digits") - 2L), signif
       signif.stars <- TRUE
     }
     pv <- xm[, P.values, drop = F]
-    pv_f <- pv
-    for (co in ncol (pv_f)) pv_f[,co] <- format.pval(pv[,co], digits = dig.tst, eps = eps.Pvalue)
-    #dimnames (pv_f) <- dimnames (pv)
+    pv_f <- matrix (vector (mode = 'character', length = ncol (pv)*nrow (pv)), ncol = ncol (pv), nrow = nrow (pv), dimnames = dimnames (pv))
+    for (co in 1:ncol (pv_f)) pv_f[,co] <- format.pval(pv[,co], digits = dig.tst, eps = eps.Pvalue)
     signif.stars <- signif.stars && any (pv < 0.1)
     if (is.na (signif.stars)) signif.stars <- FALSE  # in case there are no P-values at all (test = 'none')
     if (signif.stars) {
@@ -342,7 +275,7 @@ printCoefmat2 <- function (x, digits = max(3L, getOption("digits") - 2L), signif
                        cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
                        symbols = c("***", "**", "*", ".", " "))
       Cf <- cbind(Cf, join_mat (pv_f, format (Signif), incl2names = FALSE))
-    } else cbind (Cf, pv_f)
+    } else Cf <- cbind (Cf, pv_f)
   }
   else signif.stars <- FALSE
   

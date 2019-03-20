@@ -55,17 +55,6 @@ Object of class \code{"cwm"}, which has \code{print}, \code{summary}, \code{as.m
 }
 \description{
 Function \code{cwm} calculates weighted mean of species attributes, using matrix of species composition and one or several species attributes.
-
-#' @rdname cwm
-#' @export
-as.matrix.cwm <- function (x, ...)
-{
-  attr (x, 'com') <- NULL
-  attr (x, 'traits') <- NULL
-  attr (x, 'wstand') <- NULL
-  x <- as.matrix (unclass (x))
-  return (x)
-}
 }
 \details{
 Function \code{[.cwm]} is for extracting specified rows and columns from matrix of class \code{cwm}. As a side effect, resulting object will have concatenated the \code{com} and \code{traits} attributes to match the dimension of the resulting matrix. This function is only for extracting the parts of \code{cwm} object, not for replacing - the attempt to replace will work, but will break the inner structure of the object.
