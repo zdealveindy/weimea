@@ -33,7 +33,9 @@ test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
 
 \item{wstand}{Logical; should the variables in correlation be first weighted-standardized? Default \code{FALSE}. If \code{wstand = TRUE}, both \code{env} and \code{traits} are weighted standardized prior to calcuation; weights are derived from \code{com} matrix (extracted from \code{cwm}); \code{env} is weighted by rowsums of \code{com}, while \code{traits} are weighted by colsums of \code{com}.}
 
-\item{wreg}{logical; should weights be used in regression (\code{method = 'lm'})? If \code{TRUE}, weighted least squares are calculated instead of ordinary least squares.}
+\item{wreg}{Logical; should weights be used in the regression (\code{method = 'lm'})? If \code{TRUE}, weighted least squares are calculated instead of ordinary least squares.}
+
+\item{wsamp}{Either \code{NULL} (default) or a numeric vector; if \code{wreg = TRUE}, weights provided here are used to calculate weighted least square regression; if \code{wsamp = NULL}, \code{rowSums (com)} are used as weights. NOT IMPLEMENTED YET.}
 
 \item{dependence}{Should \code{cwm} be dependent variable and \code{env} independent (\code{'cwm ~ env'}), or opposite? Applicable only for \code{method = 'lm'}. Partial match to \code{'cwm ~ env'} and \code{'env ~ cwm'}.}
 

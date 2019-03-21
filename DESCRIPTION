@@ -1,8 +1,8 @@
 Package: weimea
 Type: Package
 Title: Weighted Mean Analysis
-Version: 0.1.13
-Date: 2019-02-04
+Version: 0.1.14
+Date: 2019-03-21
 Authors@R: person("Zeleny", "David",
            email = "zeleny.david@gmail.com",
            role = c("aut", "cre"),
