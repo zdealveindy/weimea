@@ -156,7 +156,7 @@ arma::mat sncCpp (arma::mat L, arma::mat e, bool wstand) {
     for (int co = 0; co < e_ncol; co++){
       arma::vec e_co = e.col (co);
       arma::vec e_co_temp = e_co.elem (find_finite (e_co));
-      arma::mat P_temp = P.cols (find_finite (e_co));
+      arma::mat P_temp = P.rows (find_finite (e_co));
       arma::vec w_s = colSumsCpp (P_temp);
       arma::vec w_n = rowSumsCpp (P_temp);
       arma::vec e_co_temp_ws = wstandCpp (e_co_temp, w_n);

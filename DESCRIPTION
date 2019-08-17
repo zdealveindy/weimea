@@ -1,8 +1,8 @@
 Package: weimea
 Type: Package
 Title: Weighted Mean Analysis
-Version: 0.1.14
-Date: 2019-03-21
+Version: 0.1.17
+Date: 2019-08-17
 Authors@R: person("Zeleny", "David",
            email = "zeleny.david@gmail.com",
            role = c("aut", "cre"),
@@ -19,8 +19,9 @@ Imports:
     vegan,
     ade4,
     parallel,
-    Rcpp (>= 0.12.1)
+    Rcpp (>= 0.12.1),
+    weights
 License: GPL-2
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 SystemRequirements: GNU make
 Suggests: testthat
