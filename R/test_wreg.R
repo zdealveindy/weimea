@@ -1,6 +1,6 @@
 #' Testing the relationship species attributes and sample attributes by fourth corner method
 #' 
-#' Function calculating the weighte linear regressions between CWM of species attributes (traits) and sample attributes (environmental variables) and between SNC of sample attributes and species attributes (sensu ter Braak et al. 2018), and testing them by parametric tests and their combination into max test.
+#' Function calculating the weightet linear regressions between CWM of species attributes (traits) and sample attributes (environmental variables) and between SNC of sample attributes and species attributes (sensu ter Braak et al. 2018), and testing them by parametric tests and their combination into max test.
 #' 
 #' @name test_wreg
 #' @param env Vector, matrix or data frame with sample attributes (environemntal variables).

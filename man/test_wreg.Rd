@@ -65,7 +65,7 @@ Function \code{test_wreg} returns the list of the class \code{"testWREG"} (with 
  }
 }
 \description{
-Function calculating the weighte linear regressions between CWM of species attributes (traits) and sample attributes (environmental variables) and between SNC of sample attributes and species attributes (sensu ter Braak et al. 2018), and testing them by parametric tests and their combination into max test.
+Function calculating the weightet linear regressions between CWM of species attributes (traits) and sample attributes (environmental variables) and between SNC of sample attributes and species attributes (sensu ter Braak et al. 2018), and testing them by parametric tests and their combination into max test.
 }
 \details{
 In the current implementation, species with missing species attributes are removed from sample x species matrix prior to permutation of species attributes among species.
