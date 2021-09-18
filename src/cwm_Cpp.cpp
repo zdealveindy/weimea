@@ -280,7 +280,7 @@ arma::uvec complete_cases (arma::mat X){
   arma::uvec keep(nrows, fill::zeros);
   for (int row = 0; row < nrows; row++) 
     if (is_finite(X.row(row))) keep(row) = 1;
-    return (keep);
+  return (keep);
 }
 
 //[[Rcpp::export]] 

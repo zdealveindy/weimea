@@ -3,10 +3,9 @@
 \docType{package}
 \name{weimea}
 \alias{weimea}
-\alias{weimea-package}
-\title{Weimea - package for calculating and testing weighted-means of species attributes with sample attributes}
+\title{weimea - package for calculating and testing weighted-means of species attributes with sample attributes}
 \description{
-Weimea - package for calculating and testing weighted-means of species attributes with sample attributes
+Calculates CWM and SNC and tests its relationship to environmental variables
 }
 \author{
 David Zeleny

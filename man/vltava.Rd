@@ -4,7 +4,8 @@
 \name{vltava}
 \alias{vltava}
 \title{Forest vegetation in deep river valley of Vltava (Czech Republic)}
-\format{\code{vltava} is a structured list with these items:
+\format{
+\code{vltava} is a structured list with these items:
  \itemize{
  \item \code{spe} Compositional matrix of all species (sample x species, percentage cover scale)
  \item \code{eiv} Species Ellenberg indicator values (species x Ellenberg values for \code{light}, \code{temp}erature, \code{cont}inentality, \code{moist}ure, \code{react}ion and \code{nutr}ients, compiled from Ellenberg et al. 1991).
@@ -24,7 +25,8 @@
    \item \code{spe} Compositional matrix of all species (sample x species, percentage cover scale)
    \item \code{spnames} Data frame with two columns: \code{Full.species.name} - original species names, and \code{Layer} - vegetation layer, in which the species occur (3 - tree layer, 2 - shrub layer, 1 - herb layer, J - juveniles of woody species)
    }
- }}
+ }
+}
 \usage{
 data (vltava)
 }

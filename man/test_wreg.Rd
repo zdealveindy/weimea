@@ -8,21 +8,39 @@
 \alias{plot.testWREG}
 \title{Testing the relationship species attributes and sample attributes by fourth corner method}
 \usage{
-test_wreg(env, com = NULL, traits = NULL, test = "all",
-  parallel = NULL, p.adjust.method = p.adjust.methods,
-  adjustP = FALSE)
+test_wreg(
+  env,
+  com = NULL,
+  traits = NULL,
+  test = "all",
+  parallel = NULL,
+  p.adjust.method = p.adjust.methods,
+  adjustP = FALSE
+)
 
-\method{print}{testWREG}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = FALSE, eps.Pvalue = 0.001,
-  signif.stars = getOption("show.signif.stars"), ...)
+\method{print}{testWREG}(
+  x,
+  digits = max(3, getOption("digits") - 3),
+  missing.summary = FALSE,
+  eps.Pvalue = 0.001,
+  signif.stars = getOption("show.signif.stars"),
+  ...
+)
 
 \method{coef}{testWREG}(object, ...)
 
 rescale_axis(x, var_re, var_st)
 
-\method{plot}{testWREG}(x, alpha = 0.05, line = NA, cex.lab = 1.5,
-  par.mar = c(0.5, 0.5, 0.5, 0.5), box.col = c("blue", "red"),
-  box.lwd = 2, ...)
+\method{plot}{testWREG}(
+  x,
+  alpha = 0.05,
+  line = NA,
+  cex.lab = 1.5,
+  par.mar = c(0.5, 0.5, 0.5, 0.5),
+  box.col = c("blue", "red"),
+  box.lwd = 2,
+  ...
+)
 }
 \arguments{
 \item{env}{Vector, matrix or data frame with sample attributes (environemntal variables).}

@@ -60,7 +60,7 @@ mean.env <- snc(com = vltava$spe, env = vltava$env[, c('ELEVATION', 'pH')])
 
 summary (mean.env)
 
-# Extracting values from the object of \\code{snc} class
+# Extracting values from the object of \code{snc} class
 mean.env[,1]
 mean.env[1:10, 1]
 }

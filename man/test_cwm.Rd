@@ -7,20 +7,43 @@
 \alias{plot.testCWM}
 \title{Testing the relationship between weighted-mean of species attributes with sample attributes}
 \usage{
-test_cwm(cwm, env, method = c("cor"), wcor = FALSE, wstand = FALSE,
-  wreg = FALSE, wsamp = NULL, dependence = "cwm ~ env", perm = 499,
-  test = "max", parallel = NULL, p.adjust.method = "holm",
-  adjustP = FALSE)
+test_cwm(
+  cwm,
+  env,
+  method = c("cor"),
+  wcor = FALSE,
+  wstand = FALSE,
+  wreg = FALSE,
+  wsamp = NULL,
+  dependence = "cwm ~ env",
+  perm = 499,
+  test = "max",
+  parallel = NULL,
+  p.adjust.method = "holm",
+  adjustP = FALSE
+)
 
-\method{print}{testCWM}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = FALSE, eps.Pvalue = 0.001,
-  signif.stars = getOption("show.signif.stars"), ...)
+\method{print}{testCWM}(
+  x,
+  digits = max(3, getOption("digits") - 3),
+  missing.summary = FALSE,
+  eps.Pvalue = 0.001,
+  signif.stars = getOption("show.signif.stars"),
+  ...
+)
 
 \method{coef}{testCWM}(object, ...)
 
-\method{plot}{testCWM}(x, alpha = 0.05, line = NA, cex.lab = 1.5,
-  par.mar = c(0.5, 0.5, 0.5, 0.5), box.col = c("blue", "red"),
-  box.lwd = 2, ...)
+\method{plot}{testCWM}(
+  x,
+  alpha = 0.05,
+  line = NA,
+  cex.lab = 1.5,
+  par.mar = c(0.5, 0.5, 0.5, 0.5),
+  box.col = c("blue", "red"),
+  box.lwd = 2,
+  ...
+)
 }
 \arguments{
 \item{cwm}{An object of the class \code{cwm}.}

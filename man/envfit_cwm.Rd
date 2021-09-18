@@ -4,10 +4,21 @@
 \alias{envfit_cwm}
 \title{Fits community weighted mean of species attributes (CWM) onto an ordination}
 \usage{
-envfit_cwm(ord, cwm, wstand = attr(cwm, "wstand"), permutations = 999,
-  choices = c(1, 2), display = "sites", w = weights(ord, display),
-  na.rm = FALSE, test = "modified", adjustP = FALSE,
-  p.adjust.method = "holm", p.adjust.n = NULL, ...)
+envfit_cwm(
+  ord,
+  cwm,
+  wstand = attr(cwm, "wstand"),
+  permutations = 999,
+  choices = c(1, 2),
+  display = "sites",
+  w = weights(ord, display),
+  na.rm = FALSE,
+  test = "modified",
+  adjustP = FALSE,
+  p.adjust.method = "holm",
+  p.adjust.n = NULL,
+  ...
+)
 }
 \arguments{
 \item{ord}{An ordination object or other structure from which the ordination scores can be extracted (including a data frame or matrix of scores).}

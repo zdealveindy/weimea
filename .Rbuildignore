@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^\\src\\wm_Cpp\.cpp$
 ^\.travis\.yml$
+^\.github$

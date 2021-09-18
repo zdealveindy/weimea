@@ -109,7 +109,7 @@ fourth.corner.ade <- function (sitspe, speatt, env, fc.test, perm, chessel = FAL
 fourth.corner.ade0 <- function (R, L, Q, fc.test, perm, chessel)
 {
   temp <- ade4::fourthcorner (tabR = R, tabL = L, tabQ = Q, modeltype = fc.test, nrepet = perm)
-  temp <- do.call (cbind.data.frame, temp$tabD[c('names', 'obs', 'pvalue')])
+  temp <- do.call (cbind.data.frame, list (temp$tabD$names, temp$tabD$obs, temp$tabD$pvalue))
   names (temp) <-  c('names', 'fourthcorner', 'P.value')
   if (chessel) temp[,'fourthcorner'] <- temp[,'fourthcorner']/sqrt (vegan::cca (L)$CA$eig[1])
   return (temp)

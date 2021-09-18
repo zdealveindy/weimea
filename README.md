@@ -1,2 +1,2 @@
 # weimea
-[![Travis-CI Build Status](https://travis-ci.org/zdealveindy/weimea.svg?branch=master)](https://travis-ci.org/zdealveindy/weimea)
+[![R-CMD-check](https://github.com/zdealveindy/weimea/workflows/R-CMD-check/badge.svg)](https://github.com/zdealveindy/weimea/actions)

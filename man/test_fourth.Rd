@@ -7,19 +7,39 @@
 \alias{plot.testFOURTH}
 \title{Testing the relationship species attributes and sample attributes by fourth corner method}
 \usage{
-test_fourth(env, com = NULL, traits = NULL, cwm = NULL, perm = 499,
-  test = "max", parallel = NULL, p.adjust.method = p.adjust.methods,
-  adjustP = FALSE)
+test_fourth(
+  env,
+  com = NULL,
+  traits = NULL,
+  cwm = NULL,
+  perm = 499,
+  test = "max",
+  parallel = NULL,
+  p.adjust.method = p.adjust.methods,
+  adjustP = FALSE
+)
 
-\method{print}{testFOURTH}(x, digits = max(3, getOption("digits") - 3),
-  missing.summary = FALSE, eps.Pvalue = 0.001,
-  signif.stars = getOption("show.signif.stars"), ...)
+\method{print}{testFOURTH}(
+  x,
+  digits = max(3, getOption("digits") - 3),
+  missing.summary = FALSE,
+  eps.Pvalue = 0.001,
+  signif.stars = getOption("show.signif.stars"),
+  ...
+)
 
 \method{coef}{testFOURTH}(object, ...)
 
-\method{plot}{testFOURTH}(x, alpha = 0.05, line = NA, cex.lab = 1.5,
-  par.mar = c(0.5, 0.5, 0.5, 0.5), box.col = c("blue", "red"),
-  box.lwd = 2, ...)
+\method{plot}{testFOURTH}(
+  x,
+  alpha = 0.05,
+  line = NA,
+  cex.lab = 1.5,
+  par.mar = c(0.5, 0.5, 0.5, 0.5),
+  box.col = c("blue", "red"),
+  box.lwd = 2,
+  ...
+)
 }
 \arguments{
 \item{env}{Vector, matrix or data frame with sample attributes (environemntal variables).}

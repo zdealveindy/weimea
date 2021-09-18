@@ -7,8 +7,15 @@
 \usage{
 randomize(x, ...)
 
-\method{randomize}{cwm}(x, permutations = 1, FUN = function(y) y,
-  parallel = NULL, library.par = NULL, export.cl = NULL, ...)
+\method{randomize}{cwm}(
+  x,
+  permutations = 1,
+  FUN = function(y) y,
+  parallel = NULL,
+  library.par = NULL,
+  export.cl = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{object of the class \code{cwm}}
